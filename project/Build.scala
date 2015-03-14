@@ -13,7 +13,7 @@ object SqlestBuild extends Build {
   lazy val root = Project(
     id = "root",
     base = file("."),
-    aggregate = Seq(sqlest, extractors, examples),
+    aggregate = Seq(sqlest, extractors, data, examples),
     settings = commonSettings ++ Seq(
       moduleName := "root",
 
@@ -34,7 +34,7 @@ object SqlestBuild extends Build {
         "org.scalatest" %% "scalatest" % "2.2.1" % "test"
       )
     )
-  ).dependsOn(extractors)
+  ).dependsOn(data, extractors)
 
   lazy val extractors = Project(
     id = "extractors",
@@ -47,6 +47,19 @@ object SqlestBuild extends Build {
         "org.scala-lang" % "scala-reflect" % scalaVersion.value,
         "joda-time" % "joda-time" % "2.3",
         "org.joda" % "joda-convert" % "1.6",
+        "org.scalatest" %% "scalatest" % "2.2.1" % "test"
+      )
+    )
+  )
+
+  lazy val data = Project(
+    id = "data",
+    base = file("data"),
+
+    settings = commonSettings ++ publishingSettings ++ scaladocSettings ++ Boilerplate.settings ++ Seq(
+      moduleName := "sqlest-data",
+
+      libraryDependencies ++= Seq(
         "org.scalatest" %% "scalatest" % "2.2.1" % "test"
       )
     )

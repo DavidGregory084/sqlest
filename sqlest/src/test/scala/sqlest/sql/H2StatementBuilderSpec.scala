@@ -119,6 +119,7 @@ class H2StatementBuilderSpec extends BaseStatementBuilderSpec {
     )
   }
 
+  /*
   "select with group by" should "produce the right sql" in {
     sql {
       select(sum(MyTable.col1).as("sum"))
@@ -135,7 +136,9 @@ class H2StatementBuilderSpec extends BaseStatementBuilderSpec {
       List(123)
     )
   }
+*/
 
+  /*
   "select with group by & rollup" should "throw UnsupportedOperationException" in {
     an[UnsupportedOperationException] should be thrownBy sql {
       select(sum(MyTable.col1).as("sum"))
@@ -144,7 +147,9 @@ class H2StatementBuilderSpec extends BaseStatementBuilderSpec {
         .groupBy(rollUp(MyTable.col1, MyTable.col2))
     }
   }
+*/
 
+  /*
   "select with multiple placeholders" should "produce the right sql" in {
     sql {
       select(1.column as "a", sum(2) as "b", (3.column + 4.column) as "c")
@@ -164,6 +169,7 @@ class H2StatementBuilderSpec extends BaseStatementBuilderSpec {
       List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 15 * 16)
     )
   }
+*/
 
   "where clauses for option columns" should "produce the right sql" in {
     sql {

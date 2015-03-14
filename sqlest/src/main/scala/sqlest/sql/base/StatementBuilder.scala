@@ -108,8 +108,8 @@ trait StatementBuilder extends BaseStatementBuilder
     case DateTimeColumnType => statement.setTimestamp(index, new JdbcTimestamp(value.asInstanceOf[DateTime].getMillis))
     case optionType: OptionColumnType[_, _] =>
       val option = value.asInstanceOf[Option[_]]
-      if (option.isEmpty) statement.setNull(index, jdbcType(optionType.baseColumnType)) else setParameter(statement, index, optionType.baseColumnType, value)
-    case mappedType: MappedColumnType[A, _] => setParameter(statement, index, mappedType.baseColumnType, mappedType.write(value.asInstanceOf[A]))
+      if (option.isEmpty) statement.setNull(index, jdbcType(optionType.baseDataType)) else setParameter(statement, index, optionType.baseDataType, value)
+    case mappedType: MappedColumnType[A, _] => setParameter(statement, index, mappedType.baseDataType, mappedType.write(value.asInstanceOf[A]))
   }
 
   private def jdbcType[A](columnType: ColumnType[A]): Int = columnType match {
@@ -121,8 +121,8 @@ trait StatementBuilder extends BaseStatementBuilder
     case StringColumnType => JdbcTypes.CHAR
     case ByteArrayColumnType => JdbcTypes.BINARY
     case DateTimeColumnType => JdbcTypes.TIMESTAMP
-    case optionType: OptionColumnType[_, _] => jdbcType(optionType.baseColumnType)
-    case mappedType: MappedColumnType[_, _] => jdbcType(mappedType.baseColumnType)
+    case optionType: OptionColumnType[_, _] => jdbcType(optionType.baseDataType)
+    case mappedType: MappedColumnType[_, _] => jdbcType(mappedType.baseDataType)
   }
 
 }

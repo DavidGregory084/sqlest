@@ -84,8 +84,8 @@ sealed trait AliasedColumn[A] extends Column[A] with CellExtractor[ResultSet, A]
   def read(resultSet: ResultSet) =
     columnType match {
       case baseColumnType: BaseColumnType[A] => readBaseType(resultSet, baseColumnType)
-      case optionColumnType: OptionColumnType[_, _] => optionColumnType.read(readBaseType(resultSet, optionColumnType.baseColumnType)).asInstanceOf[Option[A]]
-      case mappedColumnType: MappedColumnType[_, _] => mappedColumnType.read(readBaseType(resultSet, mappedColumnType.baseColumnType))
+      case optionColumnType: OptionColumnType[_, _] => optionColumnType.read(readBaseType(resultSet, optionColumnType.baseDataType)).asInstanceOf[Option[A]]
+      case mappedColumnType: MappedColumnType[_, _] => mappedColumnType.read(readBaseType(resultSet, mappedColumnType.baseDataType))
     }
 
   def readBaseType[B](resultSet: ResultSet, columnType: BaseColumnType[B]): Option[B] = {

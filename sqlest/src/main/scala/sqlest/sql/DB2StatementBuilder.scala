@@ -51,8 +51,8 @@ trait DB2StatementBuilder extends base.StatementBuilder {
       case IntColumnType => "integer"
       case LongColumnType => "bigint"
       case ByteArrayColumnType => "varbinary(32704)"
-      case optionColumnType: OptionColumnType[_, _] => castLiteralSql(optionColumnType.baseColumnType)
-      case mappedColumnType: MappedColumnType[_, _] => castLiteralSql(mappedColumnType.baseColumnType)
+      case optionColumnType: OptionColumnType[_, _] => castLiteralSql(optionColumnType.baseDataType)
+      case mappedColumnType: MappedColumnType[_, _] => castLiteralSql(mappedColumnType.baseDataType)
     }
 
   override def selectSql(select: Select[_, _ <: Relation]): String = {

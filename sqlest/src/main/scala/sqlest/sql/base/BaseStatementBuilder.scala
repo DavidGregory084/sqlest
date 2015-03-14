@@ -157,8 +157,8 @@ trait BaseStatementBuilder {
     case ByteArrayColumnType => javax.xml.bind.DatatypeConverter.printHexBinary(value.asInstanceOf[Array[Byte]])
     case optionType: OptionColumnType[_, _] =>
       val option = value.asInstanceOf[Option[_]]
-      if (option.isEmpty) "null" else constantSql(optionType.baseColumnType.asInstanceOf[ColumnType[Any]], option.get)
-    case mappedType: MappedColumnType[A, _] => constantSql(mappedType.baseColumnType, mappedType.write(value.asInstanceOf[A]))
+      if (option.isEmpty) "null" else constantSql(optionType.baseDataType.asInstanceOf[ColumnType[Any]], option.get)
+    case mappedType: MappedColumnType[A, _] => constantSql(mappedType.baseDataType, mappedType.write(value.asInstanceOf[A]))
   }
 
   def identifierSql(identifier: String) =

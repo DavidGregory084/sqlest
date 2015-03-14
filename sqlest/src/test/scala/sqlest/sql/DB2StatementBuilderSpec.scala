@@ -104,6 +104,7 @@ class DB2StatementBuilderSpec extends BaseStatementBuilderSpec {
     )
   }
 
+  /*
   "select with multiple placeholders" should "produce the right sql" in {
     sql {
       select(1.constant as "a", sum(2) as "b", (3.constant + 4.column) as "c")
@@ -124,6 +125,7 @@ class DB2StatementBuilderSpec extends BaseStatementBuilderSpec {
       List(2, 4, 13, 14, 5, 6, 7, 8, 9, 10, 11, 12, 15 * 16 + 1, 15 * 16 + 16)
     )
   }
+*/
 
   "select table function" should "produce the right sql" in {
     sql {
@@ -138,6 +140,7 @@ class DB2StatementBuilderSpec extends BaseStatementBuilderSpec {
     )
   }
 
+  /*
   "select with group by rollup" should "produce the right sql" in {
     sql {
       select(sum(MyTable.col1).as("sum"))
@@ -154,7 +157,9 @@ class DB2StatementBuilderSpec extends BaseStatementBuilderSpec {
       List(123)
     )
   }
+*/
 
+  /*
   "select with group by column, tuple & function" should "produce the right sql" in {
     sql {
       select(sum(MyTable.col1).as("sum"))
@@ -171,7 +176,9 @@ class DB2StatementBuilderSpec extends BaseStatementBuilderSpec {
       List(123)
     )
   }
+*/
 
+  /*
   "select with nested group functions" should "produce the right sql" in {
     sql {
       select(sum(MyTable.col1).as("sum"))
@@ -188,7 +195,9 @@ class DB2StatementBuilderSpec extends BaseStatementBuilderSpec {
       List(123)
     )
   }
+*/
 
+  /*
   "select with grouping sets & empty tuple" should "produce the right sql" in {
     sql {
       select(sum(MyTable.col1).as("sum"))
@@ -205,6 +214,7 @@ class DB2StatementBuilderSpec extends BaseStatementBuilderSpec {
       List(123)
     )
   }
+*/
 
   "select scalar function" should "produce the right sql" in {
     sql {

@@ -74,13 +74,13 @@ trait ColumnSyntax {
     def isNotNull = PostfixFunctionColumn[Boolean]("is not null", left)
   }
 
-  implicit class AliasedOptionColumnsOps[A](left: AliasedColumn[A]) {
+  /*  implicit class AliasedOptionColumnsOps[A](left: AliasedColumn[A]) {
     def ? = left match {
       case column: TableColumn[_] => AliasColumn(column, left.columnAlias)(left.columnType.toOptionColumnType)
       case AliasColumn(column, columnAlias) => AliasColumn(column, columnAlias)(left.columnType.toOptionColumnType)
       case column: ReferenceColumn[A] => ReferenceColumn(left.columnAlias)(left.columnType.toOptionColumnType)
     }
-  }
+  }*/
 
   implicit class ComparisonColumnOps[A](left: Column[A]) {
     implicit val leftType: ColumnType[A] = left.columnType
@@ -126,7 +126,7 @@ trait ColumnSyntax {
 
     def in[B](values: Column[B]*)(implicit equivalence: ColumnTypeEquivalence[A, B]) = {
       val mappedValues = values.map(value => mapLiterals(left, value, equivalence)._2)
-      InfixFunctionColumn[Boolean]("in", left, ScalarFunctionColumn("", mappedValues))
+      InfixFunctionColumn[Boolean]("in", left, ScalarFunctionColumn[A]("", mappedValues))
     }
 
     def in[B](values: List[B])(implicit rightType: ColumnType[B], equivalence: ColumnTypeEquivalence[A, B]): Column[Boolean] =
@@ -137,8 +137,8 @@ trait ColumnSyntax {
 
       def mapLiteralColumn(mappedColumnType: MappedColumnType[_, _], isOption: Boolean, column: Column[_]): Column[_] =
         column match {
-          case LiteralColumn(value) => LiteralColumn(mappedValue(mappedColumnType, isOption, column, value))(mappedColumnType.baseColumnType.asInstanceOf[ColumnType[Any]])
-          case ConstantColumn(value) => ConstantColumn(mappedValue(mappedColumnType, isOption, column, value))(mappedColumnType.baseColumnType.asInstanceOf[ColumnType[Any]])
+          case LiteralColumn(value) => LiteralColumn(mappedValue(mappedColumnType, isOption, column, value))(mappedColumnType.baseDataType.asInstanceOf[ColumnType[Any]])
+          case ConstantColumn(value) => ConstantColumn(mappedValue(mappedColumnType, isOption, column, value))(mappedColumnType.baseDataType.asInstanceOf[ColumnType[Any]])
           case _ => throw new AssertionError(s"Cannot compare MappedColumn $mappedColumnType and non mapped column $column")
         }
 
@@ -151,7 +151,7 @@ trait ColumnSyntax {
 
       (left.columnType, right.columnType) match {
         case (leftColumnType, rightColumnType) if leftColumnType == rightColumnType => (left, right)
-        case (leftColumnType: MappedColumnType[_, _], rightColumnType: MappedColumnType[_, _]) if leftColumnType.baseColumnType == rightColumnType.baseColumnType => (left, right)
+        case (leftColumnType: MappedColumnType[_, _], rightColumnType: MappedColumnType[_, _]) if leftColumnType.baseDataType == rightColumnType.baseDataType => (left, right)
         case (leftColumnType: MappedColumnType[_, _], rightColumnType: MappedColumnType[_, _]) => throw new AssertionError(s"Cannot compare 2 different MappedColumns: $leftColumnType and $rightColumnType")
         case (leftColumnType: MappedColumnType[_, _], _) => (left, mapLiteralColumn(leftColumnType, equivalence.leftOption, right))
         case (_, rightColumnType: MappedColumnType[_, _]) => (mapLiteralColumn(rightColumnType, equivalence.rightOption, left), right)

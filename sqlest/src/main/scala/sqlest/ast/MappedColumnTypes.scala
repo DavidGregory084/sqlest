@@ -17,6 +17,7 @@
 package sqlest.ast
 
 import org.joda.time.DateTime
+import sqlest.data.{ MappedDataType, OptionDataType }
 
 /** Standard set of MappedColumnTypes for various column types: */
 trait MappedColumnTypes
@@ -29,21 +30,20 @@ trait MappedColumnTypes
 
   // Expose the ColumnType types to custom Sqlest builds that use this trait:
   val ColumnType = sqlest.ast.ColumnType
-  val OptionColumnType = sqlest.ast.OptionColumnType
-  type MappedColumnType[ValueType, DatabaseType] = sqlest.ast.MappedColumnType[ValueType, DatabaseType]
-  val MappedColumnType = sqlest.ast.MappedColumnType
+  type OptionColumnType[A, B] = sqlest.data.OptionDataType[Table, A, B]
+  type MappedColumnType[ValueType, DatabaseType] = sqlest.data.MappedDataType[Table, ValueType, DatabaseType]
 }
 
 trait StringMappedColumnTypes {
   case object TrimmedStringColumnType extends MappedColumnType[String, String] {
-    val baseColumnType = StringColumnType
+    val baseDataType = StringColumnType
     def read(database: Option[String]) = database.map(_.trim)
     def write(value: String) = value
   }
 }
 
 trait BooleanMappedColumnTypes {
-  case class MappedBooleanColumnType[DatabaseType](trueValue: DatabaseType, falseValue: DatabaseType)(implicit val baseColumnType: BaseColumnType[DatabaseType]) extends MappedColumnType[Boolean, DatabaseType] {
+  case class MappedBooleanColumnType[DatabaseType](trueValue: DatabaseType, falseValue: DatabaseType)(implicit val baseDataType: BaseColumnType[DatabaseType]) extends MappedColumnType[Boolean, DatabaseType] {
     def read(database: Option[DatabaseType]) = database.map(_ == trueValue)
     def write(value: Boolean) = if (value) trueValue else falseValue
   }
@@ -70,9 +70,9 @@ trait EnumerationMappedColumnTypes {
         .getOrElse(throw new NoSuchElementException(s"Could not write $value in EnumerationColumn"))
   }
 
-  case class EnumerationColumnType[ValueType, DatabaseType](mappings: (ValueType, DatabaseType)*)(implicit val baseColumnType: BaseColumnType[DatabaseType]) extends BaseEnumerationColumnType[ValueType, DatabaseType]
+  case class EnumerationColumnType[ValueType, DatabaseType](mappings: (ValueType, DatabaseType)*)(implicit val baseDataType: BaseColumnType[DatabaseType]) extends BaseEnumerationColumnType[ValueType, DatabaseType]
 
-  case class OrderedEnumerationColumnType[ValueType, DatabaseType](mappings: (ValueType, DatabaseType)*)(implicit val baseColumnType: BaseColumnType[DatabaseType]) extends BaseEnumerationColumnType[ValueType, DatabaseType] with OrderedColumnType {
+  case class OrderedEnumerationColumnType[ValueType, DatabaseType](mappings: (ValueType, DatabaseType)*)(implicit val baseDataType: BaseColumnType[DatabaseType]) extends BaseEnumerationColumnType[ValueType, DatabaseType] with OrderedColumnType {
     def orderColumn(column: Column[_]) = {
       val caseMappings =
         mappings
@@ -87,7 +87,7 @@ trait EnumerationMappedColumnTypes {
 
 trait NumericMappedColumnTypes {
   case object BigDecimalStringColumnType extends MappedColumnType[BigDecimal, String] {
-    val baseColumnType = StringColumnType
+    val baseDataType = StringColumnType
 
     def read(database: Option[String]) = {
       database.map { database: String =>
@@ -108,7 +108,7 @@ trait NumericMappedColumnTypes {
 
 trait DateTimeMappedColumnTypes {
   case object YyyyMmDdColumnType extends MappedColumnType[DateTime, Int] {
-    val baseColumnType = IntColumnType
+    val baseDataType = IntColumnType
 
     def read(database: Option[Int]) = database.map { database =>
       val year = database / 10000
@@ -125,11 +125,11 @@ trait DateTimeMappedColumnTypes {
 
 trait OptionColumnTypes {
   def BlankIsNoneColumnType[A](implicit columnType: ColumnType.Aux[A, String]) =
-    OptionColumnType[A, String]("", (_: String).trim == "")(columnType)
+    OptionDataType[Table, A, String]("", (_: String).trim == "")(columnType)
 
   def ZeroIsNoneColumnType[A, B: Numeric](columnType: ColumnType.Aux[A, B]) =
-    OptionColumnType[A, B](implicitly[Numeric[B]].zero)(columnType)
+    OptionDataType[Table, A, B](implicitly[Numeric[B]].zero)(columnType)
 
   def ZeroIsNoneColumnType[A, B: Numeric](implicit columnType: ColumnType.Aux[A, B]) =
-    OptionColumnType[A, B](implicitly[Numeric[B]].zero)(columnType)
+    OptionDataType[Table, A, B](implicitly[Numeric[B]].zero)(columnType)
 }

@@ -384,6 +384,7 @@ class ColumnExtractorSpec extends FlatSpec with Matchers {
       None
     ))
 
+    /*
     val extractor2 = TableOne.col2.?
 
     extractor2.extractHeadOption(results) should equal(Some(
@@ -395,6 +396,7 @@ class ColumnExtractorSpec extends FlatSpec with Matchers {
       None,
       Some("e")
     ))
+*/
   }
 
   "option extractor" should "handle nulls for compound tuples" in {

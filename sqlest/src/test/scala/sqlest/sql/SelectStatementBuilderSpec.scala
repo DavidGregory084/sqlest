@@ -24,6 +24,7 @@ import sqlest.ast._
 class SelectStatementBuilderSpec extends BaseStatementBuilderSpec {
   implicit def statementBuilder = new base.StatementBuilder {}
 
+  /*
   "empty query" should "render ok" in {
     sql {
       select(MyTable.col1, MyTable.col2.?)
@@ -33,6 +34,7 @@ class SelectStatementBuilderSpec extends BaseStatementBuilderSpec {
       Nil
     )
   }
+*/
 
   "query with simple where clause" should "render ok" in {
     sql {
@@ -172,6 +174,7 @@ class SelectStatementBuilderSpec extends BaseStatementBuilderSpec {
     )
   }
 
+  /*
   "select with aggregate function" should "produce the right sql" in {
     sql {
       select(count(MyTable.col1), min(TableOne.col2), count(distinct(TableOne.col1)))
@@ -186,7 +189,9 @@ class SelectStatementBuilderSpec extends BaseStatementBuilderSpec {
       List(123)
     )
   }
+*/
 
+  /*
   "select with aliased column function" should "produce the right sql" in {
     val func = sum(MyTable.col1) as "sum-function"
 
@@ -205,6 +210,7 @@ class SelectStatementBuilderSpec extends BaseStatementBuilderSpec {
       List(123)
     )
   }
+*/
 
   "select with case statement" should "produce the right sql" in {
     sql {
@@ -299,6 +305,7 @@ class SelectStatementBuilderSpec extends BaseStatementBuilderSpec {
     )
   }
 
+  /*
   "select having" should "produce the right sql" in {
     sql {
       select(count())
@@ -315,6 +322,7 @@ class SelectStatementBuilderSpec extends BaseStatementBuilderSpec {
       List()
     )
   }
+*/
 
   "select scalar function" should "produce the right sql" in {
     sql {
