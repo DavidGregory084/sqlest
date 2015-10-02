@@ -15,7 +15,7 @@ object SqlestBuild extends Build {
   lazy val root = Project(
     id = "root",
     base = file("."),
-    aggregate = Seq(sqlest, extractors, examples),
+    aggregate = Seq(core, queries, extractors, examples),
     settings = commonSettings ++ Seq(
       moduleName := "root",
 
@@ -24,14 +24,31 @@ object SqlestBuild extends Build {
     )
   )
 
-  lazy val sqlest = Project(
-    id = "sqlest",
-    base = file("sqlest"),
+  lazy val core = Project(
+    id = "core",
+    base = file("core"),
 
-    settings = commonSettings ++ scaladocSettings ++ Boilerplate.settings ++ Seq(
-      moduleName := "sqlest",
+    settings = commonSettings ++ scaladocSettings ++ Seq(
+      moduleName := "core",
 
       libraryDependencies ++= Seq(
+        "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+        "org.scalatest" %% "scalatest" % "2.2.1" % "test",
+        "com.chuusai" %% "shapeless" % "2.1.0" % "test"
+      )
+    )
+  ).dependsOn(queries, extractors)
+
+  lazy val queries = Project(
+    id = "queries",
+    base = file("queries"),
+
+    settings = commonSettings ++ scaladocSettings ++ Boilerplate.settings ++ Seq(
+      moduleName := "queries",
+
+      libraryDependencies ++= Seq(
+        "joda-time" % "joda-time" % "2.3",
+        "org.joda" % "joda-convert" % "1.6",
         "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
         "org.scalatest" %% "scalatest" % "2.2.1" % "test",
         "com.chuusai" %% "shapeless" % "2.1.0" % "test"
@@ -66,12 +83,19 @@ object SqlestBuild extends Build {
       publish := (),
       publishLocal := ()
     )
-  ).dependsOn(sqlest)
+  ).dependsOn(core)
 
   def commonSettings = SbtScalariform.scalariformSettings ++ publishingSettings ++ Seq(
     organization := "uk.co.jhc",
-    scalaVersion := "2.11.6",
-    scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Xfatal-warnings", "-language:implicitConversions", "-language:existentials")
+    scalaVersion := "2.11.7",
+    scalacOptions ++= Seq(
+      "-unchecked", 
+      "-deprecation", 
+      "-feature", 
+      "-Xfatal-warnings", 
+      "-language:implicitConversions", 
+      "-language:existentials"
+    )
   )
 
   def scaladocSettings = SbtSite.site.settings ++ SbtSite.site.includeScaladoc() ++ SbtGhPages.ghpages.settings ++ Seq(

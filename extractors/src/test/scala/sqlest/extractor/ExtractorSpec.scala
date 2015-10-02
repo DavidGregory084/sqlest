@@ -110,7 +110,8 @@ class ExtractorSpec extends FlatSpec with Matchers with ExtractorSyntax[Seq[Any]
       extractTuple(
         intExtractorAtIndex(0),
         stringExtractorAtIndex(1).map(_.reverse),
-        intExtractorAtIndex(0).map(_ == 2))
+        intExtractorAtIndex(0).map(_ == 2)
+      )
 
     tuple3Extractor.extractHeadOption(Nil) should be(None)
     tuple3Extractor.extractHeadOption(seqRows) should be(Some((0, "olleh", false)))
@@ -171,7 +172,8 @@ class ExtractorSpec extends FlatSpec with Matchers with ExtractorSyntax[Seq[Any]
       SeqExtractor(Seq(
         intExtractorAtIndex(0),
         intExtractorAtIndex(1),
-        intExtractorAtIndex(2).map(_ * 2)))
+        intExtractorAtIndex(2).map(_ * 2)
+      ))
 
     seqExtractor.extractHeadOption(Nil) should be(None)
     seqExtractor.extractHeadOption(seqRows) should be(Some(Seq(0, 1, 4)))
@@ -188,7 +190,8 @@ class ExtractorSpec extends FlatSpec with Matchers with ExtractorSyntax[Seq[Any]
       SeqExtractor(Seq(
         intExtractorAtIndex(0),
         intExtractorAtIndex(1),
-        intExtractorAtIndex(2).map(_ * 2)))
+        intExtractorAtIndex(2).map(_ * 2)
+      ))
 
     intercept[NullPointerException] {
       seqExtractor.extractHeadOption(seqRows)
@@ -355,13 +358,15 @@ class ExtractorSpec extends FlatSpec with Matchers with ExtractorSyntax[Seq[Any]
           (1, List(1)),
           (1, List(2)),
           (2, List(3)),
-          (2, List(4)))),
+          (2, List(4))
+        )),
       (2,
         List(
           (3, List(5)),
           (3, List(6)),
           (4, List(7)),
-          (4, List(8))))
+          (4, List(8))
+        ))
     ))
   }
 
