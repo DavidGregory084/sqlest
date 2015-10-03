@@ -78,11 +78,11 @@ class CaseClassExtractorMacroSpec extends FlatSpec with Matchers with ExtractorS
     ))
   }
 
-  it should "support findCellExtractor syntax" in {
-    simpleExtractor.findCellExtractor("a") should equal(Some(intExtractor))
-    simpleExtractor.findCellExtractor("b") should equal(Some(stringExtractor))
-    simpleExtractor.findCellExtractor("c") should equal(None)
-  }
+  // it should "support findCellExtractor syntax" in {
+  //   simpleExtractor.findCellExtractor("a") should equal(Some(intExtractor))
+  //   simpleExtractor.findCellExtractor("b") should equal(Some(stringExtractor))
+  //   simpleExtractor.findCellExtractor("c") should equal(None)
+  // }
 
   it should "work for case classes with one field" in {
     val extractor = extract[Tiny](a = shapeExtractor)
@@ -189,11 +189,11 @@ class CaseClassExtractorMacroSpec extends FlatSpec with Matchers with ExtractorS
     ))
   }
 
-  it should "support findCellExtractor syntax" in {
-    nestedExtractor.findCellExtractor("one.a") should equal(Some(intExtractor))
-    nestedExtractor.findCellExtractor("two.b") should equal(Some(shapeExtractor))
-    nestedExtractor.findCellExtractor("two.c") should equal(None)
-  }
+  // it should "support findCellExtractor syntax" in {
+  //   nestedExtractor.findCellExtractor("one.a") should equal(Some(intExtractor))
+  //   nestedExtractor.findCellExtractor("two.b") should equal(Some(shapeExtractor))
+  //   nestedExtractor.findCellExtractor("two.c") should equal(None)
+  // }
 
   "extract[A]" should "fail if there are too few arguments" in {
     illTyped("""

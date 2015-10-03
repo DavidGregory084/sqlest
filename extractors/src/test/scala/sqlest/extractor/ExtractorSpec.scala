@@ -313,128 +313,128 @@ class ExtractorSpec extends FlatSpec with Matchers with ExtractorSyntax[Seq[Any]
     ))
   }
 
-  "ListMultiRowExtractor within a GroupedExtractor" should "accumulate all values with the same group by value into a list" in {
-    val seqRows = List(Seq(0, "first"), Seq(0, "second"), Seq(1, "third"), Seq(2, "forth"), Seq(2, "fifth"))
-    val groupedExtractor: GroupedExtractor[Seq[Any], (Int, List[String]), Int] =
-      extractTuple(
-        intExtractorAtIndex(0),
-        stringExtractorAtIndex(1).asList
-      ).groupBy(intExtractorAtIndex(0))
+  // "ListMultiRowExtractor within a GroupedExtractor" should "accumulate all values with the same group by value into a list" in {
+  //   val seqRows = List(Seq(0, "first"), Seq(0, "second"), Seq(1, "third"), Seq(2, "forth"), Seq(2, "fifth"))
+  //   val groupedExtractor: GroupedExtractor[Seq[Any], (Int, List[String]), Int] =
+  //     extractTuple(
+  //       intExtractorAtIndex(0),
+  //       stringExtractorAtIndex(1).asList
+  //     ).groupBy(intExtractorAtIndex(0))
 
-    groupedExtractor.extractHeadOption(Nil) should be(None)
-    groupedExtractor.extractHeadOption(seqRows) should be(Some((0, List("first", "second"))))
-    groupedExtractor.extractAll(seqRows) should be(List(
-      (0, List("first", "second")),
-      (1, List("third")),
-      (2, List("forth", "fifth"))
-    ))
-  }
+  //   groupedExtractor.extractHeadOption(Nil) should be(None)
+  //   groupedExtractor.extractHeadOption(seqRows) should be(Some((0, List("first", "second"))))
+  //   groupedExtractor.extractAll(seqRows) should be(List(
+  //     (0, List("first", "second")),
+  //     (1, List("third")),
+  //     (2, List("forth", "fifth"))
+  //   ))
+  // }
 
-  it should "nest with another ListMultiRowExtractor" in {
-    val seqRows = List(
-      Seq(1, 1, 1),
-      Seq(1, 1, 2),
-      Seq(1, 2, 3),
-      Seq(1, 2, 4),
-      Seq(2, 3, 5),
-      Seq(2, 3, 6),
-      Seq(2, 4, 7),
-      Seq(2, 4, 8)
-    )
+  // it should "nest with another ListMultiRowExtractor" in {
+  //   val seqRows = List(
+  //     Seq(1, 1, 1),
+  //     Seq(1, 1, 2),
+  //     Seq(1, 2, 3),
+  //     Seq(1, 2, 4),
+  //     Seq(2, 3, 5),
+  //     Seq(2, 3, 6),
+  //     Seq(2, 4, 7),
+  //     Seq(2, 4, 8)
+  //   )
 
-    val nestedListExtractor = extractTuple(
-      intExtractorAtIndex(0),
-      extractTuple(
-        intExtractorAtIndex(1),
-        intExtractorAtIndex(2).asList
-      ).asList
-    ).groupBy(intExtractorAtIndex(0))
+  //   val nestedListExtractor = extractTuple(
+  //     intExtractorAtIndex(0),
+  //     extractTuple(
+  //       intExtractorAtIndex(1),
+  //       intExtractorAtIndex(2).asList
+  //     ).asList
+  //   ).groupBy(intExtractorAtIndex(0))
 
-    nestedListExtractor.extractHeadOption(Nil) should be(None)
-    nestedListExtractor.extractHeadOption(seqRows) should be(Some((1, List((1, List(1)), (1, List(2)), (2, List(3)), (2, List(4))))))
-    nestedListExtractor.extractAll(seqRows) should be(List(
-      (1,
-        List(
-          (1, List(1)),
-          (1, List(2)),
-          (2, List(3)),
-          (2, List(4))
-        )),
-      (2,
-        List(
-          (3, List(5)),
-          (3, List(6)),
-          (4, List(7)),
-          (4, List(8))
-        ))
-    ))
-  }
+  //   nestedListExtractor.extractHeadOption(Nil) should be(None)
+  //   nestedListExtractor.extractHeadOption(seqRows) should be(Some((1, List((1, List(1)), (1, List(2)), (2, List(3)), (2, List(4))))))
+  //   nestedListExtractor.extractAll(seqRows) should be(List(
+  //     (1,
+  //       List(
+  //         (1, List(1)),
+  //         (1, List(2)),
+  //         (2, List(3)),
+  //         (2, List(4))
+  //       )),
+  //     (2,
+  //       List(
+  //         (3, List(5)),
+  //         (3, List(6)),
+  //         (4, List(7)),
+  //         (4, List(8))
+  //       ))
+  //   ))
+  // }
 
-  it should "stop in extractHeadOption when group by value changes" in {
-    val seqRows = List(Seq(0, "first"), Seq(0, "second"), Seq(1, "third"), Seq(0, "forth"))
-    val groupedExtractor: GroupedExtractor[Seq[Any], (Int, List[String]), Int] =
-      extractTuple(
-        intExtractorAtIndex(0),
-        stringExtractorAtIndex(1).asList
-      ).groupBy(intExtractorAtIndex(0))
+  // it should "stop in extractHeadOption when group by value changes" in {
+  //   val seqRows = List(Seq(0, "first"), Seq(0, "second"), Seq(1, "third"), Seq(0, "forth"))
+  //   val groupedExtractor: GroupedExtractor[Seq[Any], (Int, List[String]), Int] =
+  //     extractTuple(
+  //       intExtractorAtIndex(0),
+  //       stringExtractorAtIndex(1).asList
+  //     ).groupBy(intExtractorAtIndex(0))
 
-    groupedExtractor.extractHeadOption(Nil) should be(None)
-    groupedExtractor.extractHeadOption(seqRows) should be(Some((0, List("first", "second"))))
-  }
+  //   groupedExtractor.extractHeadOption(Nil) should be(None)
+  //   groupedExtractor.extractHeadOption(seqRows) should be(Some((0, List("first", "second"))))
+  // }
 
-  it should "return an empty list if all inner values are null values" in {
-    val seqRows = List(Seq(0, null), Seq(0, null), Seq(1, "third"), Seq(2, null))
-    val groupedExtractor: GroupedExtractor[Seq[Any], (Int, List[String]), Int] =
-      extractTuple(
-        intExtractorAtIndex(0),
-        stringExtractorAtIndex(1).asList
-      ).groupBy(intExtractorAtIndex(0))
+  // it should "return an empty list if all inner values are null values" in {
+  //   val seqRows = List(Seq(0, null), Seq(0, null), Seq(1, "third"), Seq(2, null))
+  //   val groupedExtractor: GroupedExtractor[Seq[Any], (Int, List[String]), Int] =
+  //     extractTuple(
+  //       intExtractorAtIndex(0),
+  //       stringExtractorAtIndex(1).asList
+  //     ).groupBy(intExtractorAtIndex(0))
 
-    groupedExtractor.extractHeadOption(Nil) should be(None)
-    groupedExtractor.extractHeadOption(seqRows) should be(Some((0, Nil)))
-    groupedExtractor.extractAll(seqRows) should be(List(
-      (0, Nil),
-      (1, List("third")),
-      (2, Nil)
-    ))
-  }
+  //   groupedExtractor.extractHeadOption(Nil) should be(None)
+  //   groupedExtractor.extractHeadOption(seqRows) should be(Some((0, Nil)))
+  //   groupedExtractor.extractAll(seqRows) should be(List(
+  //     (0, Nil),
+  //     (1, List("third")),
+  //     (2, Nil)
+  //   ))
+  // }
 
-  it should "throw a NullPointerException if some but not all of the inner values are null values" in {
-    val seqRows = List(Seq(0, "first"), Seq(0, null), Seq(1, "third"), Seq(2, null))
-    val groupedExtractor: GroupedExtractor[Seq[Any], (Int, List[String]), Int] =
-      extractTuple(
-        intExtractorAtIndex(0),
-        stringExtractorAtIndex(1).asList
-      ).groupBy(intExtractorAtIndex(0))
+  // it should "throw a NullPointerException if some but not all of the inner values are null values" in {
+  //   val seqRows = List(Seq(0, "first"), Seq(0, null), Seq(1, "third"), Seq(2, null))
+  //   val groupedExtractor: GroupedExtractor[Seq[Any], (Int, List[String]), Int] =
+  //     extractTuple(
+  //       intExtractorAtIndex(0),
+  //       stringExtractorAtIndex(1).asList
+  //     ).groupBy(intExtractorAtIndex(0))
 
-    intercept[NullPointerException] {
-      groupedExtractor.extractHeadOption(seqRows) should be(Some((0, Nil)))
-    }
+  //   intercept[NullPointerException] {
+  //     groupedExtractor.extractHeadOption(seqRows) should be(Some((0, Nil)))
+  //   }
 
-    intercept[NullPointerException] {
-      groupedExtractor.extractAll(seqRows)
-    }
-  }
+  //   intercept[NullPointerException] {
+  //     groupedExtractor.extractAll(seqRows)
+  //   }
+  // }
 
-  it should "return an empty list if the group by value is null" in {
-    val seqNullRows = List(Seq(null, null, null, null), Seq(null, null, null, null))
-    val seqRows = List(Seq(0, "first", null, null), Seq(0, "second", null, null), Seq(1, "third", 10, "innerThird"), Seq(1, "fourth", 10, "innerFourth"))
-    val groupedExtractor: GroupedExtractor[Seq[Any], (Int, List[String], List[(Int, List[String])]), Int] =
-      extractTuple(
-        intExtractorAtIndex(0),
-        stringExtractorAtIndex(1).asList,
-        extractTuple(
-          intExtractorAtIndex(2),
-          stringExtractorAtIndex(3).asList
-        ).groupBy(intExtractorAtIndex(2))
-      ).groupBy(intExtractorAtIndex(0))
+  // it should "return an empty list if the group by value is null" in {
+  //   val seqNullRows = List(Seq(null, null, null, null), Seq(null, null, null, null))
+  //   val seqRows = List(Seq(0, "first", null, null), Seq(0, "second", null, null), Seq(1, "third", 10, "innerThird"), Seq(1, "fourth", 10, "innerFourth"))
+  //   val groupedExtractor: GroupedExtractor[Seq[Any], (Int, List[String], List[(Int, List[String])]), Int] =
+  //     extractTuple(
+  //       intExtractorAtIndex(0),
+  //       stringExtractorAtIndex(1).asList,
+  //       extractTuple(
+  //         intExtractorAtIndex(2),
+  //         stringExtractorAtIndex(3).asList
+  //       ).groupBy(intExtractorAtIndex(2))
+  //     ).groupBy(intExtractorAtIndex(0))
 
-    groupedExtractor.extractHeadOption(Nil) should be(None)
-    groupedExtractor.extractHeadOption(seqNullRows) should be(None)
-    groupedExtractor.extractHeadOption(seqRows) should be(Some(0, List("first", "second"), Nil))
-    groupedExtractor.extractAll(seqRows) should be(List(
-      (0, List("first", "second"), Nil),
-      (1, List("third", "fourth"), List((10, List("innerThird", "innerFourth"))))
-    ))
-  }
+  //   groupedExtractor.extractHeadOption(Nil) should be(None)
+  //   groupedExtractor.extractHeadOption(seqNullRows) should be(None)
+  //   groupedExtractor.extractHeadOption(seqRows) should be(Some(0, List("first", "second"), Nil))
+  //   groupedExtractor.extractAll(seqRows) should be(List(
+  //     (0, List("first", "second"), Nil),
+  //     (1, List("third", "fourth"), List((10, List("innerThird", "innerFourth"))))
+  //   ))
+  // }
 }

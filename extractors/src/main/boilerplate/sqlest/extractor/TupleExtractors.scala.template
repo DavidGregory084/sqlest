@@ -16,34 +16,43 @@
 
 package sqlest.extractor
 
+import cats._
+import cats.implicits._
+import cats.data.Streaming
+
 case class Tuple1Extractor[Row, A1](e1: Extractor[Row, A1]) extends ProductExtractor[Row, Tuple1[A1]] {
-  type Accumulator = Tuple1[e1.Accumulator]
+  type Accumulator = Tuple1[Option[A1]]
 
   val innerExtractors = List(e1)
 
-  def initialize(row: Row) = Tuple1(e1.initialize(row))
+  def accumulate(rows: Streaming[Row]) = e1.run(rows).map { a1 => Tuple1(a1) }
 
-  def accumulate(accumulator: Accumulator, row: Row) = Tuple1(e1.accumulate(accumulator._1, row))
-
-  def emit(accumulator: Accumulator) = e1.emit(accumulator._1).map(Tuple1.apply)
+  def emit(results: Streaming[Accumulator]) = results.map { 
+    case Tuple1(o1) => for {
+      a1 <- o1
+    } yield Tuple1(a1)
+  }
 }
 
 [2..22#case class Tuple1Extractor[Row, [#A1#]]([#e1: Extractor[Row, A1]#]) extends ProductExtractor[Row, Tuple1[[#A1#]]] {
-  type Accumulator = Tuple1[[#e1.Accumulator#]]
+  type Accumulator = Tuple1[[#Option[A1]#]]
 
   val innerExtractors = List([#e1#])
 
-  def initialize(row: Row) =
-    Tuple1([#e1.initialize(row)#])
+  def accumulate(rows: Streaming[Row]) = 
+    [#e1.run(rows).map(a1 =>#
+    ]
+      Tuple1([#a1#])
+    [#)#
+    ][# #.flatten]
 
-  def accumulate(accumulator: Accumulator, row: Row) =
-    Tuple1([#e1.accumulate(accumulator._1, row)#])
 
-  def emit(accumulator: Accumulator) =
-    for {
-      [#emit1 <- e1.emit(accumulator._1)#
+  def emit(results: Streaming[Accumulator]) = results.map { 
+    case Tuple1([#o1#]) => for {
+      [#a1 <- o1#
       ]
-    } yield Tuple1([#emit1#])
+    } yield Tuple1([#a1#])
+  }
 
   def map[B](func: ([#A1#]) => B) =
     MappedExtractor(this, func.tupled)
