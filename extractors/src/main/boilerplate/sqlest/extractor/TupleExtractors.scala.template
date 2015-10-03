@@ -25,7 +25,7 @@ case class Tuple1Extractor[Row, A1](e1: Extractor[Row, A1]) extends ProductExtra
 
   val innerExtractors = List(e1)
 
-  def accumulate(rows: Streaming[Row]) = e1.run(rows).map { a1 => Tuple1(a1) }
+  def accumulate(rows: Streaming[Row]) = e1.run(rows).map { Tuple1(_) }
 
   def emit(results: Streaming[Accumulator]) = results.map { 
     case Tuple1(o1) => for {
@@ -40,12 +40,7 @@ case class Tuple1Extractor[Row, A1](e1: Extractor[Row, A1]) extends ProductExtra
   val innerExtractors = List([#e1#])
 
   def accumulate(rows: Streaming[Row]) = 
-    [#e1.run(rows).map(a1 =>#
-    ]
-      Tuple1([#a1#])
-    [#)#
-    ][# #.flatten]
-
+    ([#e1.run(rows)# |@| ]).tupled
 
   def emit(results: Streaming[Accumulator]) = results.map { 
     case Tuple1([#o1#]) => for {

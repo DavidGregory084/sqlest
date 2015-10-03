@@ -167,7 +167,7 @@ case class NonOptionExtractor[Row, A](inner: Extractor[Row, Option[A]]) extends 
 case class ListMultiRowExtractor[Row, A](inner: Extractor[Row, A]) extends Extractor[Row, List[A]] with SimpleExtractor[Row, List[A]] {
   type Accumulator = List[Option[A]]
 
-  def accumulate(rows: Streaming[Row]) = Streaming(inner.run(rows).toList)
+  def accumulate(rows: Streaming[Row]) = inner.run(rows).map(List(_))
 
   def emit(results: Streaming[Accumulator]) = results.flatMap { list =>
     val noRowsEmpty = list.forall(!_.isEmpty)
