@@ -121,6 +121,12 @@ case class MappedExtractor[Row, A, B](inner: Extractor[Row, A], func: A => B, un
   def emit(results: Streaming[inner.Accumulator]) = inner.emit(results).map(Functor[Option].lift(func))
 }
 
+case class AppedExtractor[Row, A, B](fa: Extractor[Row, A], fab: Extractor[Row, A => B]) extends Extractor[Row, B] with SimpleExtractor[Row, B] with SingleRowExtractor[Row, B] {
+  type Accumulator = (Option[A], Option[A => B])
+  def accumulate(rows: Streaming[Row]) = fa.run(rows) zip fab.run(rows)
+  def emit(results: Streaming[Accumulator]) = results map { case (optA, optF) => optA ap optF }
+}
+
 /**
  * An extractor that aggregates results from a seq of extractors into a seq.
  */
@@ -178,19 +184,6 @@ case class ListMultiRowExtractor[Row, A](inner: Extractor[Row, A]) extends Extra
     else if (allRowsEmpty) Streaming(Some(Nil))
     else Streaming(None)
   }
-
-  // In a left join either all row are full or all rows are null.
-  // These are the valid accumulators that will return a list
-  // def emit(accumulator: Queue[Option[A]]) = {
-  //   val noRowsEmpty = accumulator.forall(!_.isEmpty)
-  //   val allRowsEmpty = accumulator.forall(_.isEmpty)
-  //   if (noRowsEmpty)
-  //     Some(accumulator.map(_.get).toList)
-  //   else if (allRowsEmpty)
-  //     Some(Nil)
-  //   else
-  //     None
-  // }
 }
 
 // /**
@@ -254,19 +247,17 @@ case class ListMultiRowExtractor[Row, A](inner: Extractor[Row, A]) extends Extra
 //   }
 // }
 
-// object Extractor {
-//   implicit class ExtractorOps(extractor: Extractor[_, _]) {
-//     def findCellExtractor(path: String) = ExtractorFinder(extractor, path)
-//   }
+object Extractor {
+  // implicit class ExtractorOps(extractor: Extractor[_, _]) {
+  //   def findCellExtractor(path: String) = ExtractorFinder(extractor, path)
+  // }
 
-//   implicit class OptionExtractorOps[Row, A](optionExtractor: Extractor[Row, Option[A]]) {
-//     def asNonOption = NonOptionExtractor(optionExtractor)
-//   }
+  implicit class OptionExtractorOps[Row, A](optionExtractor: Extractor[Row, Option[A]]) {
+    def asNonOption = NonOptionExtractor(optionExtractor)
+  }
 
-//   implicit def extractorIsApplicative[Row]: Applicative[Extractor[Row, ?]] = new Applicative[Extractor[Row, ?]] {
-//     def pure[A](a: A) = ConstantExtractor(a)
-//     def ap[A, B](fa: Extractor[Row, A])(fab: Extractor[Row, A => B]): Extractor[Row, B] = {
-//       fa
-//     }
-//   }
-// }
+  implicit def extractorIsApplicative[Row]: Applicative[Extractor[Row, ?]] = new Applicative[Extractor[Row, ?]] {
+    def pure[A](a: A) = ConstantExtractor(a)
+    def ap[A, B](fa: Extractor[Row, A])(fab: Extractor[Row, A => B]): Extractor[Row, B] = AppedExtractor(fa, fab)
+  }
+}
