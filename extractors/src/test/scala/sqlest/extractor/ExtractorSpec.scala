@@ -166,41 +166,41 @@ class ExtractorSpec extends FlatSpec with Matchers with ExtractorSyntax[Seq[Any]
     }
   }
 
-  "SeqExtractor" should "extract values from all extractors and return them in a Seq" in {
-    val seqRows = List(Seq(0, 1, 2), Seq(2, 3, 4), Seq(5, 6, 7))
-    val seqExtractor: SeqExtractor[Seq[Any], Int] =
-      SeqExtractor(Seq(
-        intExtractorAtIndex(0),
-        intExtractorAtIndex(1),
-        intExtractorAtIndex(2).map(_ * 2)
-      ))
+  // "SeqExtractor" should "extract values from all extractors and return them in a Seq" in {
+  //   val seqRows = List(Seq(0, 1, 2), Seq(2, 3, 4), Seq(5, 6, 7))
+  //   val seqExtractor: SeqExtractor[Seq[Any], Int] =
+  //     SeqExtractor(Seq(
+  //       intExtractorAtIndex(0),
+  //       intExtractorAtIndex(1),
+  //       intExtractorAtIndex(2).map(_ * 2)
+  //     ))
 
-    seqExtractor.extractHeadOption(Nil) should be(None)
-    seqExtractor.extractHeadOption(seqRows) should be(Some(Seq(0, 1, 4)))
-    seqExtractor.extractAll(seqRows) should be(List(
-      Seq(0, 1, 4),
-      Seq(2, 3, 8),
-      Seq(5, 6, 14)
-    ))
-  }
+  //   seqExtractor.extractHeadOption(Nil) should be(None)
+  //   seqExtractor.extractHeadOption(seqRows) should be(Some(Seq(0, 1, 4)))
+  //   seqExtractor.extractAll(seqRows) should be(List(
+  //     Seq(0, 1, 4),
+  //     Seq(2, 3, 8),
+  //     Seq(5, 6, 14)
+  //   ))
+  // }
 
-  it should "throw a NullPointerException if any of the inner extractors extracted a null value" in {
-    val seqRows = List(Seq(null, 1, 2), Seq(2, 3, 4), Seq(5, 6, null))
-    val seqExtractor: SeqExtractor[Seq[Any], Int] =
-      SeqExtractor(Seq(
-        intExtractorAtIndex(0),
-        intExtractorAtIndex(1),
-        intExtractorAtIndex(2).map(_ * 2)
-      ))
+  // it should "throw a NullPointerException if any of the inner extractors extracted a null value" in {
+  //   val seqRows = List(Seq(null, 1, 2), Seq(2, 3, 4), Seq(5, 6, null))
+  //   val seqExtractor: SeqExtractor[Seq[Any], Int] =
+  //     SeqExtractor(Seq(
+  //       intExtractorAtIndex(0),
+  //       intExtractorAtIndex(1),
+  //       intExtractorAtIndex(2).map(_ * 2)
+  //     ))
 
-    intercept[NullPointerException] {
-      seqExtractor.extractHeadOption(seqRows)
-    }
+  //   intercept[NullPointerException] {
+  //     seqExtractor.extractHeadOption(seqRows)
+  //   }
 
-    intercept[NullPointerException] {
-      seqExtractor.extractAll(seqRows)
-    }
-  }
+  //   intercept[NullPointerException] {
+  //     seqExtractor.extractAll(seqRows)
+  //   }
+  // }
 
   "OptionExtractor" should "wrap a ConstantExtractor and return Some of the constant value" in {
     val seqRows = List(Seq(), Seq(), Seq())
@@ -249,69 +249,69 @@ class ExtractorSpec extends FlatSpec with Matchers with ExtractorSyntax[Seq[Any]
     ))
   }
 
-  it should "wrap a SeqExtractor and wrap any null value in an Option" in {
-    val seqRows = List(Seq(null, 1, 2), Seq(2, 3, 4), Seq(5, 6, null))
-    val seqExtractor: OptionExtractor[Seq[Any], Seq[Int]] =
-      SeqExtractor(Seq(
-        intExtractorAtIndex(0),
-        intExtractorAtIndex(1),
-        intExtractorAtIndex(2).map(_ * 2)
-      )).asOption
+  // it should "wrap a SeqExtractor and wrap any null value in an Option" in {
+  //   val seqRows = List(Seq(null, 1, 2), Seq(2, 3, 4), Seq(5, 6, null))
+  //   val seqExtractor: OptionExtractor[Seq[Any], Seq[Int]] =
+  //     SeqExtractor(Seq(
+  //       intExtractorAtIndex(0),
+  //       intExtractorAtIndex(1),
+  //       intExtractorAtIndex(2).map(_ * 2)
+  //     )).asOption
 
-    seqExtractor.extractHeadOption(Nil) should be(None)
-    seqExtractor.extractHeadOption(seqRows) should be(Some(None))
-    seqExtractor.extractAll(seqRows) should be(List(
-      None,
-      Some(List(2, 3, 8)),
-      None
-    ))
-  }
+  //   seqExtractor.extractHeadOption(Nil) should be(None)
+  //   seqExtractor.extractHeadOption(seqRows) should be(Some(None))
+  //   seqExtractor.extractAll(seqRows) should be(List(
+  //     None,
+  //     Some(List(2, 3, 8)),
+  //     None
+  //   ))
+  // }
 
-  "ListMultiRowExtractor" should "wrap the value from each row in a list when not in a GroupedExtractor" in {
-    val seqRows = List(
-      Seq(1, "a"),
-      Seq(3, "c"),
-      Seq(-1, "e")
-    )
+  // "ListMultiRowExtractor" should "wrap the value from each row in a list when not in a GroupedExtractor" in {
+  //   val seqRows = List(
+  //     Seq(1, "a"),
+  //     Seq(3, "c"),
+  //     Seq(-1, "e")
+  //   )
 
-    val intListExtractor: ListMultiRowExtractor[Seq[Any], Int] = intExtractorAtIndex(0).asList
-    intListExtractor.extractHeadOption(Nil) should be(None)
-    intListExtractor.extractHeadOption(seqRows) should be(Some(List(1)))
-    intListExtractor.extractAll(seqRows) should be(List(List(1), List(3), List(-1)))
+  //   val intListExtractor: ListMultiRowExtractor[Seq[Any], Int] = intExtractorAtIndex(0).asList
+  //   intListExtractor.extractHeadOption(Nil) should be(None)
+  //   intListExtractor.extractHeadOption(seqRows) should be(Some(List(1)))
+  //   intListExtractor.extractAll(seqRows) should be(List(List(1), List(3), List(-1)))
 
-    val stringListExtractor: ListMultiRowExtractor[Seq[Any], String] = stringExtractorAtIndex(1).asList
-    stringListExtractor.extractHeadOption(Nil) should be(None)
-    stringListExtractor.extractHeadOption(seqRows) should be(Some(List("a")))
-    stringListExtractor.extractAll(seqRows) should be(List(List("a"), List("c"), List("e")))
-  }
+  //   val stringListExtractor: ListMultiRowExtractor[Seq[Any], String] = stringExtractorAtIndex(1).asList
+  //   stringListExtractor.extractHeadOption(Nil) should be(None)
+  //   stringListExtractor.extractHeadOption(seqRows) should be(Some(List("a")))
+  //   stringListExtractor.extractAll(seqRows) should be(List(List("a"), List("c"), List("e")))
+  // }
 
-  it should "be composable with an OptionExtractor" in {
-    val seqRows = List(Seq(null), Seq(3), Seq(null), Seq(-1))
+  // it should "be composable with an OptionExtractor" in {
+  //   val seqRows = List(Seq(null), Seq(3), Seq(null), Seq(-1))
 
-    val intListExtractor: ListMultiRowExtractor[Seq[Any], Option[Int]] = intExtractorAtIndex(0).asOption.asList
-    intListExtractor.extractHeadOption(Nil) should be(None)
-    intListExtractor.extractHeadOption(seqRows) should be(Some(List(None)))
-    intListExtractor.extractAll(seqRows) should be(List(
-      List(None),
-      List(Some(3)),
-      List(None),
-      List(Some(-1))
-    ))
-  }
+  //   val intListExtractor: ListMultiRowExtractor[Seq[Any], Option[Int]] = intExtractorAtIndex(0).asOption.asList
+  //   intListExtractor.extractHeadOption(Nil) should be(None)
+  //   intListExtractor.extractHeadOption(seqRows) should be(Some(List(None)))
+  //   intListExtractor.extractAll(seqRows) should be(List(
+  //     List(None),
+  //     List(Some(3)),
+  //     List(None),
+  //     List(Some(-1))
+  //   ))
+  // }
 
-  it should "work with another ListMultiRowExtractor as peers within another extractor" in {
-    val seqRows = List(Seq(0, "hello"), Seq(2, "bye"), Seq(4, "level"))
-    val tupleOfListExtractors: Tuple2Extractor[Seq[Any], List[Int], List[String]] =
-      extractTuple(intExtractorAtIndex(0).asList, stringExtractorAtIndex(1).asList)
+  // it should "work with another ListMultiRowExtractor as peers within another extractor" in {
+  //   val seqRows = List(Seq(0, "hello"), Seq(2, "bye"), Seq(4, "level"))
+  //   val tupleOfListExtractors: Tuple2Extractor[Seq[Any], List[Int], List[String]] =
+  //     extractTuple(intExtractorAtIndex(0).asList, stringExtractorAtIndex(1).asList)
 
-    tupleOfListExtractors.extractHeadOption(Nil) should be(None)
-    tupleOfListExtractors.extractHeadOption(seqRows) should be(Some(List(0), List("hello")))
-    tupleOfListExtractors.extractAll(seqRows) should be(List(
-      (List(0), List("hello")),
-      (List(2), List("bye")),
-      (List(4), List("level"))
-    ))
-  }
+  //   tupleOfListExtractors.extractHeadOption(Nil) should be(None)
+  //   tupleOfListExtractors.extractHeadOption(seqRows) should be(Some(List(0), List("hello")))
+  //   tupleOfListExtractors.extractAll(seqRows) should be(List(
+  //     (List(0), List("hello")),
+  //     (List(2), List("bye")),
+  //     (List(4), List("level"))
+  //   ))
+  // }
 
   // "ListMultiRowExtractor within a GroupedExtractor" should "accumulate all values with the same group by value into a list" in {
   //   val seqRows = List(Seq(0, "first"), Seq(0, "second"), Seq(1, "third"), Seq(2, "forth"), Seq(2, "fifth"))
@@ -321,13 +321,24 @@ class ExtractorSpec extends FlatSpec with Matchers with ExtractorSyntax[Seq[Any]
   //       stringExtractorAtIndex(1).asList
   //     ).groupBy(intExtractorAtIndex(0))
 
+  //   val listMultiRowExtractor =
+  //     extractTuple(
+  //       intExtractorAtIndex(0),
+  //       stringExtractorAtIndex(1).asList
+  //     )
+
   //   groupedExtractor.extractHeadOption(Nil) should be(None)
-  //   groupedExtractor.extractHeadOption(seqRows) should be(Some((0, List("first", "second"))))
-  //   groupedExtractor.extractAll(seqRows) should be(List(
+  //   println(listMultiRowExtractor.extractHeadOption(seqRows))
+  //   val expectedExtract1 = Some((0, List("first", "second")))
+  //   println(s"***** expected: $expectedExtract1")
+  //   groupedExtractor.extractHeadOption(seqRows) should be(expectedExtract1)
+  //   val expectedExtract2 = List(
   //     (0, List("first", "second")),
   //     (1, List("third")),
   //     (2, List("forth", "fifth"))
-  //   ))
+  //   )
+  //   println(s"***** expected: $expectedExtract2")
+  //   groupedExtractor.extractAll(seqRows) should be(expectedExtract2)
   // }
 
   // it should "nest with another ListMultiRowExtractor" in {

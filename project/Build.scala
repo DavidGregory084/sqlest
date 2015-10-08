@@ -12,6 +12,11 @@ import xerial.sbt.Sonatype._
 
 object SqlestBuild extends Build {
 
+  lazy val testDependencies = Seq(
+    "org.scalatest" %% "scalatest" % "2.2.4" % "test",
+    "com.chuusai" %% "shapeless" % "2.2.5" % "test"
+  )
+
   lazy val root = Project(
     id = "root",
     base = file("."),
@@ -31,10 +36,8 @@ object SqlestBuild extends Build {
     settings = commonSettings ++ scaladocSettings ++ Seq(
       moduleName := "core",
 
-      libraryDependencies ++= Seq(
-        "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
-        "org.scalatest" %% "scalatest" % "2.2.1" % "test",
-        "com.chuusai" %% "shapeless" % "2.1.0" % "test"
+      libraryDependencies ++= testDependencies ++ Seq(
+        "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0"
       )
     )
   ).dependsOn(queries, extractors)
@@ -46,12 +49,10 @@ object SqlestBuild extends Build {
     settings = commonSettings ++ scaladocSettings ++ Boilerplate.settings ++ Seq(
       moduleName := "queries",
 
-      libraryDependencies ++= Seq(
+      libraryDependencies ++= testDependencies ++ Seq(
         "joda-time" % "joda-time" % "2.3",
         "org.joda" % "joda-convert" % "1.6",
-        "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
-        "org.scalatest" %% "scalatest" % "2.2.1" % "test",
-        "com.chuusai" %% "shapeless" % "2.1.0" % "test"
+        "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0"
       )
     )
   ).dependsOn(extractors)
@@ -63,13 +64,11 @@ object SqlestBuild extends Build {
     settings = commonSettings ++ scaladocSettings ++ Boilerplate.settings ++ Seq(
       moduleName := "sqlest-extractors",
 
-      libraryDependencies ++= Seq(
+      libraryDependencies ++= testDependencies ++ Seq(
         "org.scala-lang" % "scala-reflect" % scalaVersion.value,
         "joda-time" % "joda-time" % "2.3",
         "org.joda" % "joda-convert" % "1.6",
         "org.spire-math" %% "cats" % "0.2.0",
-        "org.scalatest" %% "scalatest" % "2.2.1" % "test",
-        "com.chuusai" %% "shapeless" % "2.1.0" % "test",
         compilerPlugin("org.spire-math" %% "kind-projector" % "0.6.3")
       )
     )
@@ -97,7 +96,9 @@ object SqlestBuild extends Build {
       "-Xfatal-warnings", 
       "-language:implicitConversions", 
       "-language:existentials"
-    )
+    ),
+    initialCommands in (Test, console) := 
+      """ammonite.repl.Repl.run("repl.frontEnd() = ammonite.repl.frontend.FrontEnd.JLineWindows")"""
   )
 
   def scaladocSettings = SbtSite.site.settings ++ SbtSite.site.includeScaladoc() ++ SbtGhPages.ghpages.settings ++ Seq(

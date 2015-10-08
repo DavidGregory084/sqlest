@@ -116,12 +116,12 @@ class CaseClassExtractorMacroSpec extends FlatSpec with Matchers with ExtractorS
     extract[DefaultParams](a = intExtractor)
   }
 
-  case class VarargsParams(a: Int, b: String*)
-  it should "work for apply methods with varargs" in {
-    extract[VarargsParams](intExtractor, stringExtractor, stringExtractor)
-    extract[VarargsParams](intExtractor, stringExtractor)
-    extract[VarargsParams](intExtractor)
-  }
+  // case class VarargsParams(a: Int, b: String*)
+  // it should "work for apply methods with varargs" in {
+  //   extract[VarargsParams](intExtractor, stringExtractor, stringExtractor)
+  //   extract[VarargsParams](intExtractor, stringExtractor)
+  //   extract[VarargsParams](intExtractor)
+  // }
 
   case class TypeParamClass[A, B](a: A, b: B)
   case class ReversedTypeParamClass[A, B](b: B, a: A)
@@ -133,8 +133,8 @@ class CaseClassExtractorMacroSpec extends FlatSpec with Matchers with ExtractorS
     extract[ReversedTypeParamClass[String, Int]](intExtractor, stringExtractor)
     extract[DuplicateTypeParamClass[Int]](intExtractor, intExtractor)
     extract[MixedTypeParamClass[Int]](stringExtractor, intExtractor)
-    extract[List[String]](stringExtractor, stringExtractor)
-    extract[Map[Int, String]](intExtractor -> stringExtractor, intExtractor -> stringExtractor)
+    // extract[List[String]](stringExtractor, stringExtractor)
+    // extract[Map[Int, String]](intExtractor -> stringExtractor, intExtractor -> stringExtractor)
   }
 
   it should "handle path-dependent types correctly" in {
