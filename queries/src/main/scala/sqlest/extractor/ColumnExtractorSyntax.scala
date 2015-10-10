@@ -35,10 +35,10 @@ trait ColumnExtractorSyntax {
         case productExtractor: ProductExtractor[_, _] => productExtractor.innerExtractors.flatMap(_.columns)
         case MappedExtractor(innerExtractor, _, _) => innerExtractor.columns
         case OptionExtractor(innerExtractor) => innerExtractor.columns
-        case NonOptionExtractor(innerExtractor) => innerExtractor.columns
-        case SeqExtractor(extractors) => extractors.flatMap(_.columns).toList
-        case ListMultiRowExtractor(innerExtractor) => innerExtractor.columns
-        case GroupedExtractor(innerExtractor, groupByExtractor) => innerExtractor.columns ++ groupByExtractor.columns
+        // case NonOptionExtractor(innerExtractor) => innerExtractor.columns
+        // case SeqExtractor(extractors) => extractors.flatMap(_.columns).toList
+        // case ListMultiRowExtractor(innerExtractor) => innerExtractor.columns
+        // case GroupedExtractor(innerExtractor, groupByExtractor) => innerExtractor.columns ++ groupByExtractor.columns
       }
     }
   }

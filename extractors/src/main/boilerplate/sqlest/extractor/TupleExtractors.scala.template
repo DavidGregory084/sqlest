@@ -40,8 +40,9 @@ case class Tuple1Extractor[Row, A1](e1: Extractor[Row, A1]) extends ProductExtra
     [#r1 <- e1.extractRow#
     _ <- set(rows)
     ]
-    _ <- set(rows.tail)
-  } yield ([#r1# |@| ]) map { Tuple1([#_#]) }
+  } yield ([#r1# |@| ]) map { 
+    Tuple1([#_#]) 
+  }
 
   def map[B](func: ([#A1#]) => B) =
     MappedExtractor(this, func.tupled)

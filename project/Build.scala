@@ -6,6 +6,7 @@ import com.typesafe.sbt.SbtGit.GitKeys.gitRemoteRepo
 import com.typesafe.sbt.SbtGhPages
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtSite
+import pl.project13.scala.sbt.JmhPlugin
 import sbtrelease.ReleasePlugin.autoImport._
 import spray.boilerplate.BoilerplatePlugin._
 import xerial.sbt.Sonatype._
@@ -28,6 +29,19 @@ object SqlestBuild extends Build {
       publishLocal := ()
     )
   )
+
+  lazy val bench = Project(
+    id = "bench",
+    base = file("bench"),
+
+    settings = commonSettings ++ Seq(
+      moduleName := "bench",
+
+      libraryDependencies ++= Seq(
+        "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0"
+      )
+    )
+  ).dependsOn(extractors).enablePlugins(JmhPlugin)
 
   lazy val core = Project(
     id = "core",

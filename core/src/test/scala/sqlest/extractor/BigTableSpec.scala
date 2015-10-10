@@ -96,47 +96,48 @@ class BigTableSpec extends FlatSpec with Matchers {
 
   object DomainClassExtractor extends ProductExtractor[ResultSet, DomainClass] {
     import TableOne._
+    import M._
 
     type Accumulator = DomainClass
     val innerExtractors = List(col1, col2, col3, col4, col5, col6, col7, col8, col9, col10, col11, col12, col13, col14, col15, col16, col17, col18, col19, col20, col21, col22, col23, col24, col25, col26, col27, col28, col29, col30)
 
-    def initialize(row: ResultSet) = read(row)
-
-    def accumulate(accumulator: DomainClass, row: ResultSet) = read(row)
-
-    def emit(accumulator: DomainClass) = Some(accumulator)
+    private[extractor] def extractRow = for {
+      rows <- get
+      result = rows.headOption.map(read)
+      _ <- set(rows.drop(1))
+    } yield result
 
     def read(row: ResultSet) = new DomainClass(
-      col1.emit(col1.initialize(row)).get,
-      col2.emit(col2.initialize(row)).get,
-      col3.emit(col3.initialize(row)).get,
-      col4.emit(col4.initialize(row)).get,
-      col5.emit(col5.initialize(row)).get,
-      col6.emit(col6.initialize(row)).get,
-      col7.emit(col7.initialize(row)).get,
-      col8.emit(col8.initialize(row)).get,
-      col9.emit(col9.initialize(row)).get,
-      col10.emit(col10.initialize(row)).get,
-      col11.emit(col11.initialize(row)).get,
-      col12.emit(col12.initialize(row)).get,
-      col13.emit(col13.initialize(row)).get,
-      col14.emit(col14.initialize(row)).get,
-      col15.emit(col15.initialize(row)).get,
-      col16.emit(col16.initialize(row)).get,
-      col17.emit(col17.initialize(row)).get,
-      col18.emit(col18.initialize(row)).get,
-      col19.emit(col19.initialize(row)).get,
-      col20.emit(col20.initialize(row)).get,
-      col21.emit(col21.initialize(row)).get,
-      col22.emit(col22.initialize(row)).get,
-      col23.emit(col23.initialize(row)).get,
-      col24.emit(col24.initialize(row)).get,
-      col25.emit(col25.initialize(row)).get,
-      col26.emit(col26.initialize(row)).get,
-      col27.emit(col27.initialize(row)).get,
-      col28.emit(col28.initialize(row)).get,
-      col29.emit(col29.initialize(row)).get,
-      col30.emit(col30.initialize(row)).get
+      col1.read(row).get,
+      col2.read(row).get,
+      col3.read(row).get,
+      col4.read(row).get,
+      col5.read(row).get,
+      col6.read(row).get,
+      col7.read(row).get,
+      col8.read(row).get,
+      col9.read(row).get,
+      col10.read(row).get,
+      col11.read(row).get,
+      col12.read(row).get,
+      col13.read(row).get,
+      col14.read(row).get,
+      col15.read(row).get,
+      col16.read(row).get,
+      col17.read(row).get,
+      col18.read(row).get,
+      col19.read(row).get,
+      col20.read(row).get,
+      col21.read(row).get,
+      col22.read(row).get,
+      col23.read(row).get,
+      col24.read(row).get,
+      col25.read(row).get,
+      col26.read(row).get,
+      col27.read(row).get,
+      col28.read(row).get,
+      col29.read(row).get,
+      col30.read(row).get
     )
   }
 

@@ -18,7 +18,6 @@ package sqlest.extractor
 
 import cats._
 import cats.implicits._
-import cats.data._
 import cats.state._
 import cats.state.State._
 import cats.state.StateT._
@@ -27,12 +26,12 @@ import org.joda.time.DateTime
 sealed trait Extractor[Row, A] {
   type SingleResult
 
-  val M = MonadState[StateT[Eval, ?, ?], List[Row]]
+  val M = MonadState[StateT[Eval, ?, ?], IndexedSeq[Row]]
 
-  private[extractor] def extractRow: StateT[Eval, List[Row], Option[A]]
+  private[extractor] def extractRow: StateT[Eval, IndexedSeq[Row], Option[A]]
 
-  def extractHeadOption(rows: Iterable[Row]): Option[A]
-  def extractAll(rows: Iterable[Row]): List[A]
+  def extractHeadOption(rows: Iterable[Row]): Option[SingleResult]
+  def extractAll(rows: Iterable[Row]): List[SingleResult]
 
   def map[B](func: A => B) = MappedExtractor(this, func)
   def map[B](func: A => B, unapplyFunc: B => Option[Any]) = MappedExtractor(this, func, Some(unapplyFunc))
@@ -51,21 +50,26 @@ trait SimpleExtractor[Row, A] {
 
   type SingleResult = A
 
-  def extractHeadOption(rows: Iterable[Row]): Option[A] = {
+  def extractHeadOption(iterable: Iterable[Row]): Option[A] = {
+    val rows = iterable.toIndexedSeq
+
     if (rows.isEmpty)
       None
     else {
-      Some(checkNullValueAndGet(extractRow.runA(rows.toList).value))
+      val value = extractRow.runA(rows).value
+      Some(checkNullValueAndGet(value))
     }
   }
 
-  def extractAll(rows: Iterable[Row]): List[A] = {
+  def extractAll(iterable: Iterable[Row]): List[A] = {
+    val rows = iterable.toIndexedSeq
+
     @annotation.tailrec
-    def loop(rows: Iterable[Row], results: Seq[A] = Nil): List[A] = {
-      if (rows.isEmpty)
+    def loop(innerRows: IndexedSeq[Row], results: IndexedSeq[A] = IndexedSeq.empty[A]): List[A] = {
+      if (innerRows.isEmpty)
         results.toList
       else {
-        val (remaining, next) = extractRow.run(rows.toList).value
+        val (remaining, next) = extractRow.run(innerRows).value
         loop(remaining, results :+ checkNullValueAndGet(next))
       }
     }
@@ -89,7 +93,7 @@ case class ConstantExtractor[Row, A](value: A) extends Extractor[Row, A] with Si
 
   private[extractor] def extractRow = for {
     rows <- get
-    _ <- set(rows.tail)
+    _ <- set(rows.drop(1))
   } yield Option(value)
 }
 
@@ -101,9 +105,9 @@ trait CellExtractor[Row, A] extends Extractor[Row, A] with SimpleExtractor[Row, 
 
   private[extractor] def extractRow = for {
     rows <- get
-    value = read(rows.head)
-    _ <- set(rows.tail)
-  } yield value
+    result = rows.headOption.flatMap(read)
+    _ <- set(rows.drop(1))
+  } yield result
 
   def read(row: Row): Option[A]
 }
@@ -186,17 +190,27 @@ case class OptionExtractor[Row, A](inner: Extractor[Row, A]) extends Extractor[R
 
 // }
 
-// object Extractor {
-//   // implicit class ExtractorOps(extractor: Extractor[_, _]) {
-//   //   def findCellExtractor(path: String) = ExtractorFinder(extractor, path)
-//   // }
+object Extractor {
 
-//   implicit class OptionExtractorOps[Row, A](optionExtractor: Extractor[Row, Option[A]]) {
-//     def asNonOption = NonOptionExtractor(optionExtractor)
-//   }
+  case class Continuation[R, A](run: (A => R) => R)
 
-//   implicit def extractorIsApplicative[Row]: Applicative[Extractor[Row, ?]] = new Applicative[Extractor[Row, ?]] {
-//     def pure[A](a: A) = ConstantExtractor(a)
-//     def ap[A, B](fa: Extractor[Row, A])(fab: Extractor[Row, A => B]): Extractor[Row, B] = AppedExtractor(fa, fab)
-//   }
-// }
+  implicit def contMonad[R] = new Monad[Continuation[R, ?]] {
+    def pure[A](a: A) = Continuation(cb => cb(a))
+
+    def flatMap[A, B](callbackA: Continuation[R, A])(f: A => Continuation[R, B]) =
+      Continuation[R, B] { callbackB => callbackA.run { a => f(a).run(callbackB) } }
+  }
+
+  implicit class ExtractorOps(extractor: Extractor[_, _]) {
+    def findCellExtractor(path: String) = ExtractorFinder(extractor, path)
+  }
+
+  //   implicit class OptionExtractorOps[Row, A](optionExtractor: Extractor[Row, Option[A]]) {
+  //     def asNonOption = NonOptionExtractor(optionExtractor)
+  //   }
+
+  //   implicit def extractorIsApplicative[Row]: Applicative[Extractor[Row, ?]] = new Applicative[Extractor[Row, ?]] {
+  //     def pure[A](a: A) = ConstantExtractor(a)
+  //     def ap[A, B](fa: Extractor[Row, A])(fab: Extractor[Row, A => B]): Extractor[Row, B] = AppedExtractor(fa, fab)
+  //   }
+}

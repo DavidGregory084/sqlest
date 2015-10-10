@@ -36,17 +36,17 @@ class ExtractorFinderSpec extends FlatSpec with Matchers {
     extractor.findCellExtractor("foo") should equal(None)
   }
 
-  it should "find a cell extractor in a bare list extractor" in {
-    val extractor = TableOne.col1.asList
-    extractor.findCellExtractor("") should equal(Some(TableOne.col1))
-    extractor.findCellExtractor("foo") should equal(None)
-  }
+  // it should "find a cell extractor in a bare list extractor" in {
+  //   val extractor = TableOne.col1.asList
+  //   extractor.findCellExtractor("") should equal(Some(TableOne.col1))
+  //   extractor.findCellExtractor("foo") should equal(None)
+  // }
 
-  it should "find a cell extractor in a bare grouped extractor" in {
-    val extractor = TableOne.col1.groupBy(TableOne.col1)
-    extractor.findCellExtractor("") should equal(Some(TableOne.col1))
-    extractor.findCellExtractor("foo") should equal(None)
-  }
+  // it should "find a cell extractor in a bare grouped extractor" in {
+  //   val extractor = TableOne.col1.groupBy(TableOne.col1)
+  //   extractor.findCellExtractor("") should equal(Some(TableOne.col1))
+  //   extractor.findCellExtractor("foo") should equal(None)
+  // }
 
   it should "find a cell extractor in a bare product extractor" in {
     val extractor = extractTuple(

@@ -55,19 +55,19 @@ trait ColumnExtractorSetters extends ColumnExtractorSyntax {
               }
           }
 
-        case nonOptionExtractor: NonOptionExtractor[ResultSet, a] =>
-          nonOptionExtractor.inner.settersFor(Option(value))
+        // case nonOptionExtractor: NonOptionExtractor[ResultSet, a] =>
+        //   nonOptionExtractor.inner.settersFor(Option(value))
 
-        case seqExtractor: SeqExtractor[ResultSet, a] =>
-          val values = value.asInstanceOf[Seq[a]]
-          seqExtractor.extractors.zip(values).flatMap {
-            case (extractor, value) => extractor.settersFor(value)
-          }.toList
+        // case seqExtractor: SeqExtractor[ResultSet, a] =>
+        //   val values = value.asInstanceOf[Seq[a]]
+        //   seqExtractor.extractors.zip(values).flatMap {
+        //     case (extractor, value) => extractor.settersFor(value)
+        //   }.toList
 
         case ConstantExtractor(_) => Nil
         case _: MappedExtractor[ResultSet, _, _] => throw new Exception(s"Cannot use settersFor with a MappedExtractor without an unapplyMethod - $extractor")
-        case _: ListMultiRowExtractor[ResultSet, _] => throw new Exception("Cannot use settersFor with a ListMultiRowExtractor")
-        case _: GroupedExtractor[ResultSet, _, _] => throw new Exception("Cannot use settersFor with a GroupedExtractor")
+        // case _: ListMultiRowExtractor[ResultSet, _] => throw new Exception("Cannot use settersFor with a ListMultiRowExtractor")
+        // case _: GroupedExtractor[ResultSet, _, _] => throw new Exception("Cannot use settersFor with a GroupedExtractor")
         case _ => throw new Exception(s"Cannot use settersFor with $extractor")
       }
     }

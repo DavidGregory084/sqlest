@@ -3,7 +3,14 @@ language: scala
 scala:
   - 2.11.6
 
+script:
+  - sbt clean coverage test
+
+before_install:
+  - pip install --user codecov
+
 after_success:
+  - codecov
   - '[[ $TRAVIS_BRANCH == "master" ]] && sbt publish'
 
 sudo: false

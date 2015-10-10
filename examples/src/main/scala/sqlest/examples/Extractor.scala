@@ -23,21 +23,21 @@ object ExtractorExamples extends App with DatabaseExample {
   )
 
   // extractors can be used in the declaration of other extractors
-  lazy val smoothyExtractor = extract[Smoothy](
-    description = SmoothyTable.description,
-    fruits = fruitExtractor.asList
-  ).groupBy(SmoothyTable.id)
+  // lazy val smoothyExtractor = extract[Smoothy](
+  //   description = SmoothyTable.description,
+  //   fruits = fruitExtractor.asList
+  // ).groupBy(SmoothyTable.id)
 
-  // inner joins can be used as follows
-  val smoothies =
-    select
-      .from(SmoothyTable)
-      .innerJoin(IngredientsTable).on(SmoothyTable.id === IngredientsTable.smoothyId)
-      .innerJoin(FruitTable).on(IngredientsTable.fruitId === FruitTable.id)
-      .where(SmoothyTable.description === "Watermelon & grape smoothie")
-      .extractAll(smoothyExtractor)
+  // // inner joins can be used as follows
+  // val smoothies =
+  //   select
+  //     .from(SmoothyTable)
+  //     .innerJoin(IngredientsTable).on(SmoothyTable.id === IngredientsTable.smoothyId)
+  //     .innerJoin(FruitTable).on(IngredientsTable.fruitId === FruitTable.id)
+  //     .where(SmoothyTable.description === "Watermelon & grape smoothie")
+  //     .extractAll(smoothyExtractor)
 
-  println(smoothies)
+  // println(smoothies)
 
   def selectAll = {
     select(FruitTable.name, FruitTable.juiciness)

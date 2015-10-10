@@ -86,54 +86,54 @@ class ColumnExtractorSettersSpec extends FlatSpec with Matchers {
     ))
   }
 
-  it should "return setters for extractors using asNonOption" in {
-    val oneNonOptionExtractor = extract[One](
-      a = FirstTable.col4.asNonOption,
-      b = FirstTable.col3.asNonOption
-    )
+  // it should "return setters for extractors using asNonOption" in {
+  //   val oneNonOptionExtractor = extract[One](
+  //     a = FirstTable.col4.asNonOption,
+  //     b = FirstTable.col3.asNonOption
+  //   )
 
-    oneNonOptionExtractor.settersFor(One(1, "one")) should be(List(
-      Setter(FirstTable.col4, Some(1)),
-      Setter(FirstTable.col3, Some("one"))
-    ))
+  //   oneNonOptionExtractor.settersFor(One(1, "one")) should be(List(
+  //     Setter(FirstTable.col4, Some(1)),
+  //     Setter(FirstTable.col3, Some("one"))
+  //   ))
 
-    val aggregateOneNonOptionTwoExtractor = extract[AggregateOneTwo](
-      one = oneNonOptionExtractor.asOption,
-      two = twoExtractor
-    )
+  //   val aggregateOneNonOptionTwoExtractor = extract[AggregateOneTwo](
+  //     one = oneNonOptionExtractor.asOption,
+  //     two = twoExtractor
+  //   )
 
-    aggregateOneNonOptionTwoExtractor.settersFor(AggregateOneTwo(None, Two(Some("two"), None))) should be(List(
-      Setter(FirstTable.col4, Option.empty[Int]),
-      Setter(FirstTable.col3, Option.empty[String]),
-      Setter(FirstTable.col3, Some("two")),
-      Setter(FirstTable.col4, Option.empty[Int])
-    ))
+  //   aggregateOneNonOptionTwoExtractor.settersFor(AggregateOneTwo(None, Two(Some("two"), None))) should be(List(
+  //     Setter(FirstTable.col4, Option.empty[Int]),
+  //     Setter(FirstTable.col3, Option.empty[String]),
+  //     Setter(FirstTable.col3, Some("two")),
+  //     Setter(FirstTable.col4, Option.empty[Int])
+  //   ))
 
-    aggregateOneNonOptionTwoExtractor.settersFor(AggregateOneTwo(Some(One(1, "one")), Two(Some("two"), None))) should be(List(
-      Setter(FirstTable.col4, Some(1)),
-      Setter(FirstTable.col3, Some("one")),
-      Setter(FirstTable.col3, Some("two")),
-      Setter(FirstTable.col4, Option.empty[Int])
-    ))
-  }
+  //   aggregateOneNonOptionTwoExtractor.settersFor(AggregateOneTwo(Some(One(1, "one")), Two(Some("two"), None))) should be(List(
+  //     Setter(FirstTable.col4, Some(1)),
+  //     Setter(FirstTable.col3, Some("one")),
+  //     Setter(FirstTable.col3, Some("two")),
+  //     Setter(FirstTable.col4, Option.empty[Int])
+  //   ))
+  // }
 
-  it should "return setters for class extractors with multiple apply methods and an unapply method" in {
-    extract[Multiple](FirstTable.col1, FirstTable.col5).settersFor(Multiple(1)) should be(List(
-      Setter(FirstTable.col1, 1),
-      Setter(FirstTable.col5, 37)
-    ))
-  }
+  // it should "return setters for class extractors with multiple apply methods and an unapply method" in {
+  //   extract[Multiple](FirstTable.col1, FirstTable.col5).settersFor(Multiple(1)) should be(List(
+  //     Setter(FirstTable.col1, 1),
+  //     Setter(FirstTable.col5, 37)
+  //   ))
+  // }
 
-  it should "return setters for case class extractors with default parameters" in {
-    extract[DefaultParams](FirstTable.col1).settersFor(DefaultParams(1)) should be(List(
-      Setter(FirstTable.col1, 1)
-    ))
+  // it should "return setters for case class extractors with default parameters" in {
+  //   extract[DefaultParams](FirstTable.col1).settersFor(DefaultParams(1)) should be(List(
+  //     Setter(FirstTable.col1, 1)
+  //   ))
 
-    extract[DefaultParams](FirstTable.col1, FirstTable.col2).settersFor(DefaultParams(1)) should be(List(
-      Setter(FirstTable.col1, 1),
-      Setter(FirstTable.col2, "sweet")
-    ))
-  }
+  //   extract[DefaultParams](FirstTable.col1, FirstTable.col2).settersFor(DefaultParams(1)) should be(List(
+  //     Setter(FirstTable.col1, 1),
+  //     Setter(FirstTable.col2, "sweet")
+  //   ))
+  // }
 
   it should "return setters for option extractors only for Some" in {
     aggregateOneTwoExtractor.settersFor(AggregateOneTwo(Some(One(1, "one")), Two(Some("two"), None))) should be(List(
@@ -149,33 +149,33 @@ class ColumnExtractorSettersSpec extends FlatSpec with Matchers {
     ))
   }
 
-  it should "return setters for case class extractors with varargs parameters" in {
-    extract[VarargsParams](FirstTable.col1, FirstTable.col5).settersFor(VarargsParams(1, 3, 5)) should be(List(
-      Setter(FirstTable.col1, 1),
-      Setter(FirstTable.col5, 3)
-    ))
+  // it should "return setters for case class extractors with varargs parameters" in {
+  //   extract[VarargsParams](FirstTable.col1, FirstTable.col5).settersFor(VarargsParams(1, 3, 5)) should be(List(
+  //     Setter(FirstTable.col1, 1),
+  //     Setter(FirstTable.col5, 3)
+  //   ))
 
-    extract[List[Int]](FirstTable.col1, FirstTable.col5).settersFor(List(1, 3)) should be(List(
-      Setter(FirstTable.col1, 1),
-      Setter(FirstTable.col5, 3)
-    ))
-  }
+  //   extract[List[Int]](FirstTable.col1, FirstTable.col5).settersFor(List(1, 3)) should be(List(
+  //     Setter(FirstTable.col1, 1),
+  //     Setter(FirstTable.col5, 3)
+  //   ))
+  // }
 
-  it should "return setters for case class with type parameters" in {
-    extract[TypeParamClass[Int, String]](FirstTable.col1, FirstTable.col2).settersFor(TypeParamClass(1, "two")) should be(List(
-      Setter(FirstTable.col1, 1),
-      Setter(FirstTable.col2, "two")
-    ))
-  }
+  // it should "return setters for case class with type parameters" in {
+  //   extract[TypeParamClass[Int, String]](FirstTable.col1, FirstTable.col2).settersFor(TypeParamClass(1, "two")) should be(List(
+  //     Setter(FirstTable.col1, 1),
+  //     Setter(FirstTable.col2, "two")
+  //   ))
+  // }
 
   it should "throw an exception when used with extractors that don't supply an unapply method" in {
-    intercept[Exception] {
-      oneExtractor.groupBy(FirstTable.col1).settersFor(List(One(1, "one")))
-    }
+    // intercept[Exception] {
+    //   oneExtractor.groupBy(FirstTable.col1).settersFor(List(One(1, "one")))
+    // }
 
-    intercept[Exception] {
-      extractTuple(FirstTable.col1, FirstTable.col2.asList).settersFor((1, Nil))
-    }
+    // intercept[Exception] {
+    //   extractTuple(FirstTable.col1, FirstTable.col2.asList).settersFor((1, Nil))
+    // }
 
     intercept[Exception] {
       extractTuple(FirstTable.col1, FirstTable.col2).map(_.toString ++ _).settersFor("bad")

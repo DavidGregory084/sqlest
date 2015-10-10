@@ -116,29 +116,29 @@ class ColumnExtractorSpec extends FlatSpec with Matchers {
     ))
   }
 
-  it should "work for apply methods with varargs" in {
-    val extractor1 = extract[VarargsParams](TableOne.col1)
-    extractor1.extractHeadOption(testResultSet) should equal(Some(
-      VarargsParams(1)
-    ))
+  // it should "work for apply methods with varargs" in {
+  //   val extractor1 = extract[VarargsParams](TableOne.col1)
+  //   extractor1.extractHeadOption(testResultSet) should equal(Some(
+  //     VarargsParams(1)
+  //   ))
 
-    extractor1.extractAll(testResultSet) should equal(List(
-      VarargsParams(1),
-      VarargsParams(3),
-      VarargsParams(-1)
-    ))
+  //   extractor1.extractAll(testResultSet) should equal(List(
+  //     VarargsParams(1),
+  //     VarargsParams(3),
+  //     VarargsParams(-1)
+  //   ))
 
-    val extractor3 = extract[VarargsParams](TableOne.col1, TableOne.col2, TableTwo.col2, TableOne.col2)
-    extractor3.extractHeadOption(testResultSet) should equal(Some(
-      VarargsParams(1, "a", "b", "a")
-    ))
+  //   val extractor3 = extract[VarargsParams](TableOne.col1, TableOne.col2, TableTwo.col2, TableOne.col2)
+  //   extractor3.extractHeadOption(testResultSet) should equal(Some(
+  //     VarargsParams(1, "a", "b", "a")
+  //   ))
 
-    extractor3.extractAll(testResultSet) should equal(List(
-      VarargsParams(1, "a", "b", "a"),
-      VarargsParams(3, "c", "d", "c"),
-      VarargsParams(-1, "e", "f", "e")
-    ))
-  }
+  //   extractor3.extractAll(testResultSet) should equal(List(
+  //     VarargsParams(1, "a", "b", "a"),
+  //     VarargsParams(3, "c", "d", "c"),
+  //     VarargsParams(-1, "e", "f", "e")
+  //   ))
+  // }
 
   it should "work for apply methods with type parameters" in {
     val extractor1 = extract[TypeParamClass[String, Int]](TableOne.col2, TableOne.col1)
@@ -152,16 +152,16 @@ class ColumnExtractorSpec extends FlatSpec with Matchers {
       TypeParamClass("e", -1)
     ))
 
-    val extractor2 = extract[List[String]](TableOne.col2, TableTwo.col2)
-    extractor2.extractHeadOption(testResultSet) should equal(Some(
-      List("a", "b")
-    ))
+    // val extractor2 = extract[List[String]](TableOne.col2, TableTwo.col2)
+    // extractor2.extractHeadOption(testResultSet) should equal(Some(
+    //   List("a", "b")
+    // ))
 
-    extractor2.extractAll(testResultSet) should equal(List(
-      List("a", "b"),
-      List("c", "d"),
-      List("e", "f")
-    ))
+    // extractor2.extractAll(testResultSet) should equal(List(
+    //   List("a", "b"),
+    //   List("c", "d"),
+    //   List("e", "f")
+    // ))
 
     val extractor3 = extract[ReversedTypeParamClass[String, Int]](TableOne.col1, TableOne.col2)
     extractor3.extractHeadOption(testResultSet) should equal(Some(
@@ -211,18 +211,18 @@ class ColumnExtractorSpec extends FlatSpec with Matchers {
     ))
   }
 
-  it should "work with inherited apply methods" in {
-    val extractor = extract[Map[Int, String]](TableOne.col1 -> TableOne.col2, TableTwo.col3 -> TableTwo.col2)
-    extractor.extractHeadOption(testResultSet) should equal(Some(
-      Map(1 -> "a", 2 -> "b")
-    ))
+  // it should "work with inherited apply methods" in {
+  //   val extractor = extract[Map[Int, String]](TableOne.col1 -> TableOne.col2, TableTwo.col3 -> TableTwo.col2)
+  //   extractor.extractHeadOption(testResultSet) should equal(Some(
+  //     Map(1 -> "a", 2 -> "b")
+  //   ))
 
-    extractor.extractAll(testResultSet) should equal(List(
-      Map(1 -> "a", 2 -> "b"),
-      Map(3 -> "c", 4 -> "d"),
-      Map(-1 -> "e", 6 -> "f")
-    ))
-  }
+  //   extractor.extractAll(testResultSet) should equal(List(
+  //     Map(1 -> "a", 2 -> "b"),
+  //     Map(3 -> "c", 4 -> "d"),
+  //     Map(-1 -> "e", 6 -> "f")
+  //   ))
+  // }
 
   "aggregate case class extractor" should "extract appropriate data structures" in {
     val extractor = extract[AggregateOneTwo](
@@ -324,35 +324,35 @@ class ColumnExtractorSpec extends FlatSpec with Matchers {
     }
   }
 
-  "list extractors" should "allow only full or empty lists" in {
-    def emptySubListresults = TestResultSet(TableOne.columns)(
-      Seq(1, null),
-      Seq(1, null)
-    )
+  // "list extractors" should "allow only full or empty lists" in {
+  //   def emptySubListresults = TestResultSet(TableOne.columns)(
+  //     Seq(1, null),
+  //     Seq(1, null)
+  //   )
 
-    def partlyFullSubListResults = TestResultSet(TableOne.columns)(
-      Seq(1, "b"),
-      Seq(1, null)
-    )
+  //   def partlyFullSubListResults = TestResultSet(TableOne.columns)(
+  //     Seq(1, "b"),
+  //     Seq(1, null)
+  //   )
 
-    def fullSubListresults = TestResultSet(TableOne.columns)(
-      Seq(1, "b"),
-      Seq(1, "b")
-    )
+  //   def fullSubListresults = TestResultSet(TableOne.columns)(
+  //     Seq(1, "b"),
+  //     Seq(1, "b")
+  //   )
 
-    val extractor = extractTuple(
-      TableOne.col1,
-      TableOne.col2.asList
-    ).groupBy(TableOne.col1)
+  //   val extractor = extractTuple(
+  //     TableOne.col1,
+  //     TableOne.col2.asList
+  //   ).groupBy(TableOne.col1)
 
-    extractor.extractHeadOption(emptySubListresults)
+  //   extractor.extractHeadOption(emptySubListresults)
 
-    intercept[NullPointerException] {
-      extractor.extractHeadOption(partlyFullSubListResults)
-    }
+  //   intercept[NullPointerException] {
+  //     extractor.extractHeadOption(partlyFullSubListResults)
+  //   }
 
-    extractor.extractHeadOption(fullSubListresults)
-  }
+  //   extractor.extractHeadOption(fullSubListresults)
+  // }
 
   "option column types" should "handle nulls" in {
     val extractor = extract[AggregateOneTwoThree](
@@ -504,335 +504,335 @@ class ColumnExtractorSpec extends FlatSpec with Matchers {
     extractor.extractAll(results) should equal(List(true, false))
   }
 
-  "nested list extractor" should "stop when the left value changes" in {
-    def results = TestResultSet(TableOne.columns ++ TableTwo.columns)(
-      Seq(1, "a", "a", 1),
-      Seq(1, "a", "b", 2),
-      Seq(2, "b", "c", 3)
-    )
+  // "nested list extractor" should "stop when the left value changes" in {
+  //   def results = TestResultSet(TableOne.columns ++ TableTwo.columns)(
+  //     Seq(1, "a", "a", 1),
+  //     Seq(1, "a", "b", 2),
+  //     Seq(2, "b", "c", 3)
+  //   )
 
-    val extractor = extractTuple(
-      extract[One](
-        a = TableOne.col1,
-        b = TableOne.col2
-      ),
-      extract[Two](
-        a = TableTwo.col2,
-        b = TableTwo.col3
-      ).asList
-    ).groupBy(extractTuple(
-        TableOne.col1,
-        TableOne.col2
-      ))
+  //   val extractor = extractTuple(
+  //     extract[One](
+  //       a = TableOne.col1,
+  //       b = TableOne.col2
+  //     ),
+  //     extract[Two](
+  //       a = TableTwo.col2,
+  //       b = TableTwo.col3
+  //     ).asList
+  //   ).groupBy(extractTuple(
+  //       TableOne.col1,
+  //       TableOne.col2
+  //     ))
 
-    extractor.extractHeadOption(results) should equal(Some(
-      (One(1, "a"), List(Two("a", 1), Two("b", 2)))
-    ))
+  //   extractor.extractHeadOption(results) should equal(Some(
+  //     (One(1, "a"), List(Two("a", 1), Two("b", 2)))
+  //   ))
 
-    extractor.extractAll(results) should equal(List(
-      (One(1, "a"), List(Two("a", 1), Two("b", 2))),
-      (One(2, "b"), List(Two("c", 3)))
-    ))
-  }
+  //   extractor.extractAll(results) should equal(List(
+  //     (One(1, "a"), List(Two("a", 1), Two("b", 2))),
+  //     (One(2, "b"), List(Two("c", 3)))
+  //   ))
+  // }
 
-  "nested list extractor" should "handle columns with nullable fields" in {
-    object TableThreeB extends TableThree(Some("b"))
+  // "nested list extractor" should "handle columns with nullable fields" in {
+  //   object TableThreeB extends TableThree(Some("b"))
 
-    def results = TestResultSet(TableThree.columns ++ TableThreeB.columns)(
-      Seq(1, null, 4, null),
-      Seq(1, null, null, null),
-      Seq(null, "b", 6, null)
-    )
+  //   def results = TestResultSet(TableThree.columns ++ TableThreeB.columns)(
+  //     Seq(1, null, 4, null),
+  //     Seq(1, null, null, null),
+  //     Seq(null, "b", 6, null)
+  //   )
 
-    val extractor = extractTuple(
-      extract[Three](
-        a = TableThree.col3,
-        b = TableThree.col4
-      ),
-      extract[Three](
-        a = TableThreeB.col3,
-        b = TableThreeB.col4
-      ).asList
-    ).groupBy(TableThree.col3)
+  //   val extractor = extractTuple(
+  //     extract[Three](
+  //       a = TableThree.col3,
+  //       b = TableThree.col4
+  //     ),
+  //     extract[Three](
+  //       a = TableThreeB.col3,
+  //       b = TableThreeB.col4
+  //     ).asList
+  //   ).groupBy(TableThree.col3)
 
-    extractor.extractHeadOption(results) should equal(Some(
-      (Three(Some(1), None), List(Three(Some(4), None), Three(None, None)))
-    ))
+  //   extractor.extractHeadOption(results) should equal(Some(
+  //     (Three(Some(1), None), List(Three(Some(4), None), Three(None, None)))
+  //   ))
 
-    extractor.extractAll(results) should equal(List(
-      (Three(Some(1), None), List(Three(Some(4), None), Three(None, None))),
-      (Three(None, Some("b")), List(Three(Some(6), None)))
-    ))
-  }
+  //   extractor.extractAll(results) should equal(List(
+  //     (Three(Some(1), None), List(Three(Some(4), None), Three(None, None))),
+  //     (Three(None, Some("b")), List(Three(Some(6), None)))
+  //   ))
+  // }
 
-  "nested list extractor" should "be composable with option extractor" in {
-    object TableThreeB extends TableThree(Some("b"))
+  // "nested list extractor" should "be composable with option extractor" in {
+  //   object TableThreeB extends TableThree(Some("b"))
 
-    def results = TestResultSet(TableThree.columns ++ TableThreeB.columns)(
-      Seq(1, null, 4, null),
-      Seq(1, null, null, null),
-      Seq(null, "b", 6, null)
-    )
+  //   def results = TestResultSet(TableThree.columns ++ TableThreeB.columns)(
+  //     Seq(1, null, 4, null),
+  //     Seq(1, null, null, null),
+  //     Seq(null, "b", 6, null)
+  //   )
 
-    val extractor = extractTuple(
-      extract[Three](
-        a = TableThree.col3,
-        b = TableThree.col4
-      ),
-      extract[Three](
-        a = TableThreeB.col3,
-        b = TableThreeB.col4
-      ).asOption.asList
-    ).groupBy(TableThree.col3)
+  //   val extractor = extractTuple(
+  //     extract[Three](
+  //       a = TableThree.col3,
+  //       b = TableThree.col4
+  //     ),
+  //     extract[Three](
+  //       a = TableThreeB.col3,
+  //       b = TableThreeB.col4
+  //     ).asOption.asList
+  //   ).groupBy(TableThree.col3)
 
-    extractor.extractHeadOption(results) should equal(Some(
-      (Three(Some(1), None), List(Some(Three(Some(4), None)), Some(Three(None, None))))
-    ))
+  //   extractor.extractHeadOption(results) should equal(Some(
+  //     (Three(Some(1), None), List(Some(Three(Some(4), None)), Some(Three(None, None))))
+  //   ))
 
-    extractor.extractAll(results) should equal(List(
-      (Three(Some(1), None), List(Some(Three(Some(4), None)), Some(Three(None, None)))),
-      (Three(None, Some("b")), List(Some(Three(Some(6), None))))
-    ))
-  }
+  //   extractor.extractAll(results) should equal(List(
+  //     (Three(Some(1), None), List(Some(Three(Some(4), None)), Some(Three(None, None)))),
+  //     (Three(None, Some("b")), List(Some(Three(Some(6), None))))
+  //   ))
+  // }
 
-  "list extractor" should "work as peers within a tuple extractor" in {
-    class TestTable(alias: Option[String]) extends Table("n", alias) {
-      val col1 = column[Int]("col1")
-      val col2 = column[Int]("col2")
-      val col3 = column[Int]("col3")
-    }
+  // "list extractor" should "work as peers within a tuple extractor" in {
+  //   class TestTable(alias: Option[String]) extends Table("n", alias) {
+  //     val col1 = column[Int]("col1")
+  //     val col2 = column[Int]("col2")
+  //     val col3 = column[Int]("col3")
+  //   }
 
-    object TestTable extends TestTable(None)
+  //   object TestTable extends TestTable(None)
 
-    import TestTable._
+  //   import TestTable._
 
-    def results = TestResultSet(List(col1, col2, col3))(
-      Seq(1, 1, 1),
-      Seq(1, 1, 2),
-      Seq(1, 2, 3),
-      Seq(1, 2, 4),
-      Seq(2, 3, 5),
-      Seq(2, 3, 6),
-      Seq(2, 4, 7),
-      Seq(2, 4, 8)
-    )
+  //   def results = TestResultSet(List(col1, col2, col3))(
+  //     Seq(1, 1, 1),
+  //     Seq(1, 1, 2),
+  //     Seq(1, 2, 3),
+  //     Seq(1, 2, 4),
+  //     Seq(2, 3, 5),
+  //     Seq(2, 3, 6),
+  //     Seq(2, 4, 7),
+  //     Seq(2, 4, 8)
+  //   )
 
-    val extractor = extractTuple(
-      col1,
-      col2.asList,
-      col3.asList
-    ).groupBy(col1)
+  //   val extractor = extractTuple(
+  //     col1,
+  //     col2.asList,
+  //     col3.asList
+  //   ).groupBy(col1)
 
-    extractor.extractHeadOption(results) should equal(Some(
-      (
-        1,
-        List(1, 1, 2, 2),
-        List(1, 2, 3, 4)
-      )
-    ))
+  //   extractor.extractHeadOption(results) should equal(Some(
+  //     (
+  //       1,
+  //       List(1, 1, 2, 2),
+  //       List(1, 2, 3, 4)
+  //     )
+  //   ))
 
-    extractor.extractAll(results) should equal(List(
-      (
-        1,
-        List(1, 1, 2, 2),
-        List(1, 2, 3, 4)
-      ),
-      (
-        2,
-        List(3, 3, 4, 4),
-        List(5, 6, 7, 8)
-      )
-    ))
-  }
+  //   extractor.extractAll(results) should equal(List(
+  //     (
+  //       1,
+  //       List(1, 1, 2, 2),
+  //       List(1, 2, 3, 4)
+  //     ),
+  //     (
+  //       2,
+  //       List(3, 3, 4, 4),
+  //       List(5, 6, 7, 8)
+  //     )
+  //   ))
+  // }
 
-  "list extractor" should "work as peers within a mapped extractor" in {
-    class TestTable(alias: Option[String]) extends Table("n", alias) {
-      val col1 = column[Int]("col1")
-      val col2 = column[Int]("col2")
-      val col3 = column[Int]("col3")
-    }
+  // "list extractor" should "work as peers within a mapped extractor" in {
+  //   class TestTable(alias: Option[String]) extends Table("n", alias) {
+  //     val col1 = column[Int]("col1")
+  //     val col2 = column[Int]("col2")
+  //     val col3 = column[Int]("col3")
+  //   }
 
-    object TestTable extends TestTable(None)
+  //   object TestTable extends TestTable(None)
 
-    import TestTable._
+  //   import TestTable._
 
-    def results = TestResultSet(List(col1, col2, col3))(
-      Seq(1, 1, 1),
-      Seq(1, 1, 2),
-      Seq(1, 2, 3),
-      Seq(1, 2, 4),
-      Seq(2, 3, 5),
-      Seq(2, 3, 6),
-      Seq(2, 4, 7),
-      Seq(2, 4, 8)
-    )
+  //   def results = TestResultSet(List(col1, col2, col3))(
+  //     Seq(1, 1, 1),
+  //     Seq(1, 1, 2),
+  //     Seq(1, 2, 3),
+  //     Seq(1, 2, 4),
+  //     Seq(2, 3, 5),
+  //     Seq(2, 3, 6),
+  //     Seq(2, 4, 7),
+  //     Seq(2, 4, 8)
+  //   )
 
-    val extractor = extract[Flattened](
-      a = col1,
-      b = col2.asList,
-      c = col3.asList
-    ).groupBy(col1)
+  //   val extractor = extract[Flattened](
+  //     a = col1,
+  //     b = col2.asList,
+  //     c = col3.asList
+  //   ).groupBy(col1)
 
-    extractor.extractHeadOption(results) should equal(Some(
-      Flattened(
-        1,
-        List(1, 1, 2, 2),
-        List(1, 2, 3, 4)
-      )
-    ))
+  //   extractor.extractHeadOption(results) should equal(Some(
+  //     Flattened(
+  //       1,
+  //       List(1, 1, 2, 2),
+  //       List(1, 2, 3, 4)
+  //     )
+  //   ))
 
-    extractor.extractAll(results) should equal(List(
-      Flattened(
-        1,
-        List(1, 1, 2, 2),
-        List(1, 2, 3, 4)
-      ),
-      Flattened(
-        2,
-        List(3, 3, 4, 4),
-        List(5, 6, 7, 8)
-      )
-    ))
-  }
+  //   extractor.extractAll(results) should equal(List(
+  //     Flattened(
+  //       1,
+  //       List(1, 1, 2, 2),
+  //       List(1, 2, 3, 4)
+  //     ),
+  //     Flattened(
+  //       2,
+  //       List(3, 3, 4, 4),
+  //       List(5, 6, 7, 8)
+  //     )
+  //   ))
+  // }
 
-  "list extractor" should "work in a nested left join without groupBy" in {
-    class TestTable(alias: Option[String]) extends Table("n", alias) {
-      val col1 = column[Int]("col1")
-      val col2 = column[Int]("col2")
-      val col3 = column[Int]("col3")
-    }
+  // "list extractor" should "work in a nested left join without groupBy" in {
+  //   class TestTable(alias: Option[String]) extends Table("n", alias) {
+  //     val col1 = column[Int]("col1")
+  //     val col2 = column[Int]("col2")
+  //     val col3 = column[Int]("col3")
+  //   }
 
-    object TestTable extends TestTable(None)
+  //   object TestTable extends TestTable(None)
 
-    import TestTable._
+  //   import TestTable._
 
-    def results = TestResultSet(List(col1, col2, col3))(
-      Seq(1, 1, 1),
-      Seq(1, 1, 2),
-      Seq(1, 2, 3),
-      Seq(1, 2, 4),
-      Seq(2, 3, 5),
-      Seq(2, 3, 6),
-      Seq(2, 4, 7),
-      Seq(2, 4, 8)
-    )
+  //   def results = TestResultSet(List(col1, col2, col3))(
+  //     Seq(1, 1, 1),
+  //     Seq(1, 1, 2),
+  //     Seq(1, 2, 3),
+  //     Seq(1, 2, 4),
+  //     Seq(2, 3, 5),
+  //     Seq(2, 3, 6),
+  //     Seq(2, 4, 7),
+  //     Seq(2, 4, 8)
+  //   )
 
-    val extractor = extract[Outer](
-      a = col1,
-      b = extract[Inner](
-      b = col2,
-      c = col3.asList
-    ).asList
-    )
+  //   val extractor = extract[Outer](
+  //     a = col1,
+  //     b = extract[Inner](
+  //     b = col2,
+  //     c = col3.asList
+  //   ).asList
+  //   )
 
-    extractor.extractHeadOption(results) should equal(Some(
-      Outer(1, List(Inner(1, List(1))))
-    ))
+  //   extractor.extractHeadOption(results) should equal(Some(
+  //     Outer(1, List(Inner(1, List(1))))
+  //   ))
 
-    extractor.extractAll(results) should equal(List(
-      Outer(1, List(Inner(1, List(1)))),
-      Outer(1, List(Inner(1, List(2)))),
-      Outer(1, List(Inner(2, List(3)))),
-      Outer(1, List(Inner(2, List(4)))),
-      Outer(2, List(Inner(3, List(5)))),
-      Outer(2, List(Inner(3, List(6)))),
-      Outer(2, List(Inner(4, List(7)))),
-      Outer(2, List(Inner(4, List(8))))
-    ))
-  }
+  //   extractor.extractAll(results) should equal(List(
+  //     Outer(1, List(Inner(1, List(1)))),
+  //     Outer(1, List(Inner(1, List(2)))),
+  //     Outer(1, List(Inner(2, List(3)))),
+  //     Outer(1, List(Inner(2, List(4)))),
+  //     Outer(2, List(Inner(3, List(5)))),
+  //     Outer(2, List(Inner(3, List(6)))),
+  //     Outer(2, List(Inner(4, List(7)))),
+  //     Outer(2, List(Inner(4, List(8))))
+  //   ))
+  // }
 
-  "list extractor" should "work in a nested left join with outer groupBy" in {
-    class TestTable(alias: Option[String]) extends Table("n", alias) {
-      val col1 = column[Int]("col1")
-      val col2 = column[Int]("col2")
-      val col3 = column[Int]("col3")
-    }
+  // "list extractor" should "work in a nested left join with outer groupBy" in {
+  //   class TestTable(alias: Option[String]) extends Table("n", alias) {
+  //     val col1 = column[Int]("col1")
+  //     val col2 = column[Int]("col2")
+  //     val col3 = column[Int]("col3")
+  //   }
 
-    object TestTable extends TestTable(None)
+  //   object TestTable extends TestTable(None)
 
-    import TestTable._
+  //   import TestTable._
 
-    def results = TestResultSet(List(col1, col2, col3))(
-      Seq(1, 1, 1),
-      Seq(1, 1, 2),
-      Seq(1, 2, 3),
-      Seq(1, 2, 4),
-      Seq(2, 3, 5),
-      Seq(2, 3, 6),
-      Seq(2, 4, 7),
-      Seq(2, 4, 8)
-    )
+  //   def results = TestResultSet(List(col1, col2, col3))(
+  //     Seq(1, 1, 1),
+  //     Seq(1, 1, 2),
+  //     Seq(1, 2, 3),
+  //     Seq(1, 2, 4),
+  //     Seq(2, 3, 5),
+  //     Seq(2, 3, 6),
+  //     Seq(2, 4, 7),
+  //     Seq(2, 4, 8)
+  //   )
 
-    val extractor = extract[Outer](
-      a = col1,
-      b = extract[Inner](
-      b = col2,
-      c = col3.asList
-    ).asList
-    ).groupBy(col1)
+  //   val extractor = extract[Outer](
+  //     a = col1,
+  //     b = extract[Inner](
+  //     b = col2,
+  //     c = col3.asList
+  //   ).asList
+  //   ).groupBy(col1)
 
-    extractor.extractHeadOption(results) should equal(Some(Outer(1, List(
-      Inner(1, List(1)),
-      Inner(1, List(2)),
-      Inner(2, List(3)),
-      Inner(2, List(4))
-    ))))
+  //   extractor.extractHeadOption(results) should equal(Some(Outer(1, List(
+  //     Inner(1, List(1)),
+  //     Inner(1, List(2)),
+  //     Inner(2, List(3)),
+  //     Inner(2, List(4))
+  //   ))))
 
-    extractor.extractAll(results) should equal(List(
-      Outer(
-        1,
-        List(
-          Inner(1, List(1)),
-          Inner(1, List(2)),
-          Inner(2, List(3)),
-          Inner(2, List(4))
-        )
-      ),
-      Outer(
-        2,
-        List(
-          Inner(3, List(5)),
-          Inner(3, List(6)),
-          Inner(4, List(7)),
-          Inner(4, List(8))
-        )
-      )
-    ))
-  }
+  //   extractor.extractAll(results) should equal(List(
+  //     Outer(
+  //       1,
+  //       List(
+  //         Inner(1, List(1)),
+  //         Inner(1, List(2)),
+  //         Inner(2, List(3)),
+  //         Inner(2, List(4))
+  //       )
+  //     ),
+  //     Outer(
+  //       2,
+  //       List(
+  //         Inner(3, List(5)),
+  //         Inner(3, List(6)),
+  //         Inner(4, List(7)),
+  //         Inner(4, List(8))
+  //       )
+  //     )
+  //   ))
+  // }
 
-  "list extractor" should "return empty list for null rows" in {
-    class TestTable(alias: Option[String]) extends Table("n", alias) {
-      val col1 = column[Int]("col1")
-      val col2 = column[Int]("col2")
-      val col3 = column[Int]("col3")
-    }
+  // "list extractor" should "return empty list for null rows" in {
+  //   class TestTable(alias: Option[String]) extends Table("n", alias) {
+  //     val col1 = column[Int]("col1")
+  //     val col2 = column[Int]("col2")
+  //     val col3 = column[Int]("col3")
+  //   }
 
-    object TestTable extends TestTable(None)
+  //   object TestTable extends TestTable(None)
 
-    import TestTable._
+  //   import TestTable._
 
-    def results = TestResultSet(List(col1, col2, col3))(
-      Seq(1, 1, null),
-      Seq(1, 2, null),
-      Seq(2, 3, null),
-      Seq(2, 4, null)
-    )
+  //   def results = TestResultSet(List(col1, col2, col3))(
+  //     Seq(1, 1, null),
+  //     Seq(1, 2, null),
+  //     Seq(2, 3, null),
+  //     Seq(2, 4, null)
+  //   )
 
-    val extractor = extractTuple(
-      col1,
-      col2.asList,
-      col3.asList
-    ).groupBy(col1)
+  //   val extractor = extractTuple(
+  //     col1,
+  //     col2.asList,
+  //     col3.asList
+  //   ).groupBy(col1)
 
-    extractor.extractHeadOption(results) should equal(Some(
-      (1, List(1, 2), List())
-    ))
+  //   extractor.extractHeadOption(results) should equal(Some(
+  //     (1, List(1, 2), List())
+  //   ))
 
-    extractor.extractAll(results) should equal(List(
-      (1, List(1, 2), List()),
-      (2, List(3, 4), List())
-    ))
-  }
+  //   extractor.extractAll(results) should equal(List(
+  //     (1, List(1, 2), List()),
+  //     (2, List(3, 4), List())
+  //   ))
+  // }
 
   "scalar function extractor" should "extract value" in {
     val aliasedScalarFunctionColumn = sqlest.ast.AliasColumn[Int](null, "scalarFunction")
