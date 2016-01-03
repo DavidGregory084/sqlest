@@ -36,6 +36,7 @@ sealed trait Extractor[Row, A] extends ChoiceExtractorSyntax[Row, A] {
   protected def checkNullValueAndGet[T](t: Option[T]) =
     t.getOrElse(throw new NullPointerException("Tried to extract a null value without an OptionExtractor"))
 
+  def ap[B](func: Extractor[Row, A => B]) = AppedExtractor(this, func)
   def map[B](func: A => B) = MappedExtractor(this, func)
   def map[B](func: A => B, unapplyFunc: B => Option[Any]) = MappedExtractor(this, func, Some(unapplyFunc))
 
@@ -131,6 +132,19 @@ case class MappedExtractor[Row, A, B](inner: Extractor[Row, A], func: A => B, un
   def accumulate(accumulator: inner.Accumulator, row: Row) = inner.accumulate(accumulator, row)
 
   def emit(accumulator: inner.Accumulator) = inner.emit(accumulator).map(func)
+}
+
+case class AppedExtractor[Row, A, B](fa: Extractor[Row, A], fab: Extractor[Row, A => B]) extends Extractor[Row, B] with SimpleExtractor[Row, B] with SingleRowExtractor[Row, B] {
+  type Accumulator = (fa.Accumulator, fab.Accumulator)
+
+  def initialize(row: Row) = (fa.initialize(row), fab.initialize(row))
+
+  def accumulate(accumulator: Accumulator, row: Row) = (fa.accumulate(accumulator._1, row), fab.accumulate(accumulator._2, row))
+
+  def emit(accumulator: Accumulator) = for {
+    a <- fa.emit(accumulator._1)
+    f <- fab.emit(accumulator._2)
+  } yield f(a)
 }
 
 trait ChoiceExtractor[Row, A, B] extends Extractor[Row, B] with SimpleExtractor[Row, B] with SingleRowExtractor[Row, B] {

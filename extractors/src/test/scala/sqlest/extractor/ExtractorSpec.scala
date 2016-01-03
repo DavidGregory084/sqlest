@@ -104,6 +104,38 @@ class ExtractorSpec extends FlatSpec with Matchers with ExtractorSyntax[Seq[Any]
     }
   }
 
+  "AppedExtractor" should "extract the result of applying a function extractor over a value extractor" in {
+    val seqRows = List(Seq(0, "hello"), Seq(2, "bye"), Seq(4, "level"))
+
+    val appedIntExtractor = intExtractorAtIndex(0).ap(extractConstant[Int => Boolean](_ == 2))
+    val appedStringExtractor = stringExtractorAtIndex(1).ap(extractConstant[String => String](_.reverse))
+
+    appedIntExtractor.extractHeadOption(Nil) should be(None)
+    appedIntExtractor.extractHeadOption(seqRows) should be(Some(false))
+    appedIntExtractor.extractAll(seqRows) should be(List(false, true, false))
+
+    appedStringExtractor.extractHeadOption(Nil) should be(None)
+    appedStringExtractor.extractHeadOption(seqRows) should be(Some("olleh"))
+    appedStringExtractor.extractAll(seqRows) should be(List("olleh", "eyb", "level"))
+  }
+
+  it should "extract the result of applying a curried function over several extractors" in {
+    val seqRows1 = List(Seq(0, "hello"), Seq(2, "bye"), Seq(4, "level"))
+    val seqRows2 = List(Seq(5, "hello"), Seq(3, "bye"), Seq(5, "level"))
+
+    val col1 = intExtractorAtIndex(0)
+    val col2 = stringExtractorAtIndex(1)
+    val fn = extractConstant[Int => String => Boolean](i => s => i == s.length)
+
+    val appedExtractor = col2.ap(col1.ap(fn))
+
+    appedExtractor.extractHeadOption(Nil) should be(None)
+    appedExtractor.extractHeadOption(seqRows1) should be(Some(false))
+    appedExtractor.extractHeadOption(seqRows2) should be(Some(true))
+    appedExtractor.extractAll(seqRows1) should be(List(false, false, false))
+    appedExtractor.extractAll(seqRows2) should be(List(true, true, true))
+  }
+
   "ChoiceExtractor" should "extract using left when the predicate is true and right when it is false" in {
     val seqRows = List(Seq(0, "a"), Seq(1, "b"), Seq(2, "c"), Seq(4, "e"), Seq(5, "f"), Seq(7, "h"))
     val addIntExtractor = intExtractorAtIndex(0).map(_ + 2)

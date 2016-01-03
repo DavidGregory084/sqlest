@@ -61,6 +61,7 @@ object ExtractorFinder {
           .flatten
 
       case MappedExtractor(inner, _, _) => apply(inner, path)
+      case AppedExtractor(inner, _) => apply(inner, path)
       case OptionExtractor(inner) => apply(inner, path)
       case NonOptionExtractor(inner) => apply(inner, path)
       case ListMultiRowExtractor(inner) => apply(inner, path)

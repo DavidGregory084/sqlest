@@ -84,6 +84,7 @@ trait ColumnExtractorSetters {
 
         case ConstantExtractor(_) => Nil
         case _: MappedExtractor[ResultSet, _, _] => throw new Exception(s"Cannot use settersFor with a MappedExtractor without an unapplyMethod - $extractor")
+        case _: AppedExtractor[ResultSet, _, _] => throw new Exception(s"Cannot use settersFor with an AppedExtractor")
         case _: ListMultiRowExtractor[ResultSet, _] => throw new Exception("Cannot use settersFor with a ListMultiRowExtractor")
         case _: GroupedExtractor[ResultSet, _, _] => throw new Exception("Cannot use settersFor with a GroupedExtractor")
         case _: CondExtractor[ResultSet, _, _] => throw new Exception("Cannot use settersFor with a CondExtractor")
